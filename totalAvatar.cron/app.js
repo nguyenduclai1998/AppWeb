@@ -33,14 +33,14 @@ cron.schedule('*/1 * * * *', async() => {
 	}).toArray()
 	for(const item of dataServices) {
 		await waitFor(50);
-		const totalWarranty = await db.collection("service_logs").find({$and:[{service_code:item.service_code, hasavatar:false}]}).toArray()
-		console.log(totalWarranty.length)
+		const totalNoAvatar = await db.collection("service_logs").find({$and:[{service_code:item.service_code, hasavatar:false}]}).toArray()
+		console.log(totalNoAvatar.length)
 		console.log(item.service_code)
-		const total_warranty = {
-			total_warranty: totalWarranty.length
+		const total_not_avatar = {
+			totalNoAvatar: totalNoAvatar.length
 		}
-		const dataServiceLogs = await db.collection("services").updateMany({service_code:item.service_code}, {$set: total_warranty})
-		console.log(total_warranty)
+		const dataServiceLogs = await db.collection("services").updateMany({service_code:item.service_code}, {$set: total_not_avatar})
+		console.log(total_not_avatar)
 	}
 })
 const waitFor = (ms) => new Promise(r => setTimeout(r, ms))
