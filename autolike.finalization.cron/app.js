@@ -45,8 +45,8 @@ const pushDataService = async() => {
 				const dataDaily = await db.collection("daily_stat").find({
 					token:token,
 					closedTime: {
-						$gte:1598400000000,
-						$lt:1598486400000
+						$gte:1598486400000,
+						$lt:1598572800000
 					}
 				}).toArray()
 				let amounts = 0
@@ -60,7 +60,7 @@ const pushDataService = async() => {
 					token:token,
 					amount: amounts,
 					status: 0,
-					closedTime:1598400000000,
+					closedTime:1598486400000,
 					created_at: new Date().getTime(),
 					update_at: new Date().getTime()
 				})
