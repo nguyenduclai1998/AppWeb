@@ -39,7 +39,7 @@ cron.schedule('*/5 * * * * *', async() => {
 		const total_warranty = {
 			total_warranty: totalWarranty.length
 		}
-		// const dataServiceLogs = await db.collection("services").updateMany({service_code:item.service_code}, {$set: total_warranty})
+		const dataServiceLogs = await db.collection("services").updateMany({service_code:item.service_code}, {$set: total_warranty})
 		console.log(total_warranty)
 	}
 })
