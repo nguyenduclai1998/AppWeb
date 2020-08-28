@@ -23,7 +23,7 @@ mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: t
 	.catch((error) => {
 		console.log("connect error" + error)
 	})
-cron.schedule('*/5 * * * * *', async() => {
+cron.schedule('*/1 * * * *', async() => {
 	const tokenDailyStat = await db.collection("daily_stat").distinct("token")
 	for(const token of tokenDailyStat) {
 		const serviceCodeDailyStat = await db.collection("daily_stat").distinct("service_code", {status:"Closed", token:token})
