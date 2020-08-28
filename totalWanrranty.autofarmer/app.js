@@ -26,7 +26,7 @@ mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: t
 cron.schedule('*/5 * * * * *', async() => {
 	const tokenDailyStat = await db.collection("daily_stat").distinct("token")
 	for(const token of tokenDailyStat) {
-		const serviceCodeDailyStat = await db.collection("daily_stat").distinct("service_code", {status:"Closed"})
+		const serviceCodeDailyStat = await db.collection("daily_stat").distinct("service_code", {status:"Closed", token:token})
 		for(const serviceCode of serviceCodeDailyStat) {
 			const dailyStat = await db.collection("daily_stat").findOne({token:token, service_code:serviceCode})
 			const totalWanrranty = await db.collection("service_logs").find({
@@ -44,6 +44,7 @@ cron.schedule('*/5 * * * * *', async() => {
 				amount: parseInt(dailyStat.amount) - (parseInt(totalWanrranty) * parseInt(dailyStat.price)),
 				warrantyCosts: parseInt(totalWanrranty) * parseInt(dailyStat.price)
 			}
+			await db.collection("daily_stat").updateOne({token:token, service_code:serviceCode}, {$set:updateDaily})
 			console.log("token:" + token + ",service_code" + serviceCode + "tong bao hanh:" +totalWanrranty )
 			console.log(updateDaily)
 		}
