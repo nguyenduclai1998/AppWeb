@@ -23,18 +23,18 @@ mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: t
 	.catch((error) => {
 		console.log("connect error"+ error)
 	})
-cron.schedule('*/3 * * * * *', async() => {
-	await pushDataServiceSuccess()
+cron.schedule('*/3 * * * *', async() => {
+	await pushDataServiceClosed()
 })
 
 cron.schedule('*/3 * * * *', async() => {
-	// await popDataServiceSuccess()
+	await popDataServiceClosed()
 })
 
 const waitFor = (ms) => new Promise(r => setTimeout(r, ms))
 
-const pushDataServiceSuccess = async() => {
-	client.llen("data_service_success", async function(err, reply) {
+const pushDataServiceClosed = async() => {
+	client.llen("data_service_closed", async function(err, reply) {
 		console.log("So phan tu trong queue la: "+ reply)
 		if(reply >= 95000) {
 			console.log("So queue trong data_service_logs da du");
@@ -43,44 +43,42 @@ const pushDataServiceSuccess = async() => {
 				status:"Success"
 			}).toArray()
 			for(const dailySuccess of dataDailySuccess) {
-				console.log(dailySuccess.finishTime)
+				client.rpush("data_service_closed", JSON.stringify(dailySuccess), function(err, reply) {
+
+				})
 			}
 		}
 	})
 }
 
-const popDataServiceSuccess = async() => {
-	for(var i = 1; i < 500; i++) {
-		client.lpop("data_service_success", async function(err, reply) {
+const popDataServiceClosed = async() => {
+	for(var i = 1; i < 100; i++) {
+		client.lpop("data_service_closed", async function(err, reply) {
 			if(reply == null || typeof(reply) === "undefined") {
 				console.log("Queue rong");
 			} else {
 				const dataPopQueue = JSON.parse(reply)
-				const dataServiceLog = await db.collection("service_logs").findOne({token:dataPopQueue.token, service_code:dataPopQueue.service_code})
-				const dataServiceSuccess = await db.collection("services").findOne({service_code:dataPopQueue.service_code})
-				const dataServiceLogsCount = await db.collection("service_logs").find({token:dataPopQueue.token, service_code:dataPopQueue.service_code}).count()
-				await waitFor(50)
-				await db.collection("daily_statss_test").updateOne({
-					token:dataPopQueue.token,
-					service_code:dataPopQueue.service_code,
-					type:dataServiceLog.type,
-					price:dataServiceLog.price,
-					timeStart:new Date(dataServiceSuccess.createdAt).valueOf(),
-					finishTime: new Date(dataServiceSuccess.TimeSuccess).valueOf(),
-					finishTimeISO:new Date(dataServiceSuccess.TimeSuccess).toISOString()
-				}, {
-					$setOnInsert: {
-						status:dataServiceSuccess.status,
-						total:dataServiceLogsCount,
-						amount:parseInt(dataServiceLogsCount) * parseInt(dataServiceLog.price),
-						updated_at:new Date().valueOf()
-					}},
-					{
-						upsert: true
+				// console.log(dataPopQueue)
+				const dataDaily = await db.collection("daily_stat").find({
+					finishTime: {
+						$gte: new Date().valueOf() - 691200000,
+						$lt:new Date().valueOf() - 604800000
 					}
-				)	
-				console.log("token:"+dataPopQueue.token+", service_code:"+dataPopQueue.service_code+",count:"+dataServiceLogsCount)
-				console.log("done 1 ban ghi")
+				}).toArray()
+				for(const daily of dataDaily) {
+					const dataUpdate = {
+						status:"Closed",
+						closedTime: parseInt(daily.finishTime) + parseInt(604800000),
+						closedTimeISO:new Date(parseInt(daily.finishTime) + parseInt(604800000)).toISOString()
+					}
+					await db.collection("daily_stat").updateOne({
+						token:dataPopQueue.token,
+						service_code:dataPopQueue.service_code
+					}, {
+						$set:dataUpdate
+					})
+					console.log(dataUpdate)
+				}
 			}
 		})
 	}
