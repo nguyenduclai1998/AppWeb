@@ -58,7 +58,6 @@ const popDataServiceClosed = async() => {
 				console.log("Queue rong");
 			} else {
 				const dataPopQueue = JSON.parse(reply)
-				// console.log(dataPopQueue)
 				const dataDaily = await db.collection("daily_stat").find({
 					finishTime: {
 						$gte: new Date().valueOf() - 691200000,
