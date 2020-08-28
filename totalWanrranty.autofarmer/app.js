@@ -28,7 +28,8 @@ cron.schedule('*/5 * * * * *', async() => {
 	for(const token of tokenDailyStat) {
 		const serviceCodeDailyStat = await db.collection("daily_stat").distinct("service_code", {status:"Closed"})
 		for(const serviceCode of serviceCodeDailyStat) {
-			const dataServiceLogs = await db.collection("service_logs").find({
+			const dailyStat = await db.collection("daily_stat").findOne({token:token, service_code:serviceCode})
+			const totalWanrranty = await db.collection("service_logs").find({
 			    service_code: serviceCode,
 			    token: token,
 			    $or: [{
@@ -37,7 +38,14 @@ cron.schedule('*/5 * * * * *', async() => {
 			        hasavatar: false
 			    }]
 			}).count()
-			console.log("token:" + token + ",service_code" + serviceCode + "tong bao hanh:" +dataServiceLogs )
+
+			const updateDaily = {
+				totalWanrranty: totalWanrranty,
+				amount: parseInt(dailyStat.amount) - (parseInt(totalWanrranty) * parseInt(dailyStat.price)),
+				warrantyCosts: parseInt(totalWanrranty) * parseInt(dailyStat.price)
+			}
+			console.log("token:" + token + ",service_code" + serviceCode + "tong bao hanh:" +totalWanrranty )
+			console.log(updateDaily)
 		}
 	}
 })
