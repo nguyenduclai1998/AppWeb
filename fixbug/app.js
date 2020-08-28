@@ -24,7 +24,7 @@ mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: t
 		console.log("connect error" + error)
 	})
 cron.schedule('*/5 * * * * *', async() => {
-	
+	await fixBug();
 })
 const waitFor = (ms) => new Promise(r => setTimeout(r, ms))
 
@@ -37,6 +37,15 @@ const fixBug = async() => {
 	    status: "Closed"
 	}).toArray()
 	for(const item of dailyStat) {
-		
+		const updateDaily = {
+			amount: (parseInt(item.price) * parseInt(item.total)) - (parseInt(item.totalWanrranty) * parseInt(item.price))
+		}
+
+		await db.collection("daily_stat").updateOne({token:item.token,service_code:item.service_code}, {$set: {amount:updateDaily}})
+		console.log(item.token)
+		console.log(item.service_code)
+		console.log(updateDaily)
 	}
+
+
 }
