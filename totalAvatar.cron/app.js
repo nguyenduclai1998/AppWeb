@@ -23,12 +23,12 @@ mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: t
 	.catch((error) => {
 		console.log("connect error")
 	})
-cron.schedule('*/1 * * * *', async() => {
+cron.schedule('*/5 * * * *', async() => {
 	const dataServices = await db.collection("services").find({
 		status:"Success",
 		created_at: {
-			$lte:1597622400000,
-			$lt:1598054400000
+			$lte:parseInt(new Date().valueOf()) - parseInt(604800000),
+			$lt:new Date().valueOf()
 		}
 	}).toArray()
 	for(const item of dataServices) {
