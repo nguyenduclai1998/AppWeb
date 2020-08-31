@@ -18,18 +18,13 @@ client.on('error', (err) => {
 
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async () => {
-		await pushDataService()
 		console.log("Connect success");
 	}) 
 	.catch((error) => {
 		console.log("connect error"+error)
 	})
-cron.schedule('*/120 * * * * *', async() => {
-	// await pushDataService()
-})
-
-cron.schedule('*/2 * * * * *', async() => {
-	// await popDataService()
+cron.schedule('*/5 * * * *', async() => {
+	await pushDataService()
 })
 
 const waitFor = (ms) => new Promise(r => setTimeout(r, ms))
@@ -41,8 +36,8 @@ const pushDataService = async() => {
 		const dataServiceLogs = await db.collection("service_logs").distinct("service_code",{
 			token:token,
 			closedTime:{
-				$gte: 1598745600000,
-				$lt: 1598832000000
+				$gte: 1598659200000,
+				$lt: 1598745600000
 			}})
 		console.log("adas" + dataServiceLogs.length)
 		let tongTien = 0;
