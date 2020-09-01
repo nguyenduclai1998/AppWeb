@@ -42,7 +42,7 @@ const pushDataService = async() => {
 	var endDay = end.valueOf()
 
 	let listServiceCode = await db.collection("services").distinct("service_code", {
-	    status: "Active",
+	    //status: "Active",
 		created_at: {
 	        $gte: 1598806800000,
 	        $lt: 1598893199999
