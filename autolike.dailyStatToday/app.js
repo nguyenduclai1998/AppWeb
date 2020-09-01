@@ -48,7 +48,7 @@ const pushDataService = async() => {
 	    }
 	})
 
-	// listServiceCode = [...new Set(listServiceCode)]
+	listServiceCode = [...new Set(listServiceCode)]
 	const listServiceLog = await db.collection("service_logs").find({
 		service_code: { $in: listServiceCode },
 		createdAt: {
