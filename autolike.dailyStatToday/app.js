@@ -1,4 +1,4 @@
-import express from 'express';
+	import express from 'express';
 import 'regenerator-runtime/runtime';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
@@ -40,9 +40,10 @@ const pushDataService = async() => {
 	var end = new Date();
 	end.setHours(23,59,59,999);
 	var endDay = end.valueOf()
+	console.log(startDay, endDay)
 
 	let listServiceCode = await db.collection("services").distinct("service_code", {
-	    status: "Active",
+	    // status: "Active",
 		created_at: {
 	        $gte: 1598806800000,
 	        $lt: 1598893199999
@@ -50,7 +51,13 @@ const pushDataService = async() => {
 	})
 
 	listServiceCode = [...new Set(listServiceCode)]
-	const listServiceLog = await db.collection("service_logs").find( { service_code: { $in: listServiceCode } } ).toArray()
+	const listServiceLog = await db.collection("service_logs").find({
+		service_code: { $in: listServiceCode },
+		createdAt: {
+	        $gte: 1598806800000,
+	        $lt: 1598893199999
+	    }
+	}).toArray()
 
 	let mapServiceCodeToken = {}
 
