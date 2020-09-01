@@ -41,7 +41,7 @@ const pushDataService = async() => {
 	end.setHours(23,59,59,999);
 	var endDay = end.valueOf()
 
-	let listServiceCode = await db.collection("services").distinct("service_code", {
+	const listServiceCode = await db.collection("services").distinct("service_code", {
 	    status: "Active",
 		created_at: {
 	        $gte: startDay,
@@ -49,64 +49,35 @@ const pushDataService = async() => {
 	    }
 	})
 
-	listServiceCode = [...new Set(listServiceCode)]
-	const listServiceLog = await db.collection("service_logs").find( { service_code: { $in: listServiceCode } } ).toArray()
-	console.log(listServiceLog.length)
-	let mapServiceCodeToken = {}
+	const listToken = await db.collection("service_logs").distinct("token", {})
+	for (const token of listToken) {
+		for(const service_code of listServiceCode) {
+			const service = await db.collection("services").findOne({service_code:service_code})
+			const countServiceLog = await db.collection("service_logs").find({
+				token: token,
+				service_code: service_code
+			}).count()
 
-	// listServiceLog.forEach(value => {
-	// 	if( !mapServiceCodeToken[ value.service_code + "-" + value.token ] ) {
-	// 		mapServiceCodeToken[ value.service_code + "-" + value.token ] = {}
-	// 	 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['totalLog'] = 1		
-	// 	 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['price'] = value.price
-	// 	 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['data'] = []
-	// 	 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['data'].push(value)
-	// 	 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['totalPrice'] = 0
-	// 	 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['token'] = value.token
-	// 	 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['service_code'] = value.service_code
-	// 	 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['type'] = value.type
-	// 	} else {
-	// 		mapServiceCodeToken[ value.service_code + "-" + value.token ]['totalLog']++
-	// 	}
-	// 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['totalPrice'] = mapServiceCodeToken[ value.service_code + "-" + value.token ]['price'] * mapServiceCodeToken[ value.service_code + "-" + value.token ]['totalLog']
-	// })
-	
-	// insertDailyStat( Object.values(mapServiceCodeToken) ).then(data => {  
-	// 	console.log(data)
-	// })
-}
-
-
-function insertDailyStat(listServiceCodeToken) {
-	 return new Promise((resolve, reject) => {
-       let results = [];
-       let completed = 0;
-       
-       listServiceCodeToken.forEach((value, index) => {
-       		let paramUpdate = {
-       			token: value.token,
-				service_code:value.service_code,
-				type: value.type,
-				price: value.price,
+			const serviceLog = await db.collection("service_logs").findOne({
+				token: token,
+				service_code: service_code
+			})
+			let paramUpdate = {
+				token: token,
+				service_code:service_code,
+				type: service.type,
+				price: serviceLog.price,
 				startTime:startDay
-       		}
+			}
 
-       		let paramInsert = {
+			let paramInsert = {
        			status:'Active',
-				total: value.totalLog,
-				amount: value.totalPrice,
+				total: countServiceLog,
+				amount: parseInt(countServiceLog) * parseInt(serviceLog.price),
 				updated_at:new Date().valueOf()
        		}
 
-            Promise.resolve( db.collection("daily_stat").updateOne(paramUpdate, {$setOnInsert: paramInsert},{ upsert: true}) )
-            .then(result => {
-                results[index] = result;
-                completed += 1;
-                
-                if (completed == listServiceCodeToken.length) {
-                    resolve(results);
-                }
-            }).catch(err => reject(err));
-       });
-    });
+			await db.collection("daily_statss_test").updateOne(paramUpdate, {$setOnInsert: paramInsert},{ upsert: true})
+		}
+	}
 }
