@@ -24,7 +24,7 @@ mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: t
 	.catch((error) => {
 		console.log("connect error"+error)
 	})
-cron.schedule('*/5 * * * *', async() => {
+cron.schedule('*/5 * * * * *', async() => {
 	 await pushDataService()
 })
 
@@ -43,41 +43,70 @@ const pushDataService = async() => {
 	console.log(startDay, endDay)
 
 	let listServiceCode = await db.collection("services").distinct("service_code", {
-		status: "Active"
-	})
-
-	listServiceCode = [...new Set(listServiceCode)]
-	const listServiceLog = await db.collection("service_logs").find({
-		service_code: { $in: listServiceCode },
-		createdAt: {
+		status: "Active",
+		created_at: {
 	        $gte: startDay,
 	        $lt: endDay
 	    }
-	}).toArray()
-
-	let mapServiceCodeToken = {}
-
-	listServiceLog.forEach(value => {
-		if( !mapServiceCodeToken[ value.service_code + "-" + value.token ] ) {
-			mapServiceCodeToken[ value.service_code + "-" + value.token ] = {}
-		 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['totalLog'] = 1		
-		 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['price'] = value.price
-		 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['data'] = []
-		 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['data'].push(value)
-		 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['totalPrice'] = 0
-		 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['token'] = value.token
-		 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['service_code'] = value.service_code
-		 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['type'] = value.type
-		} else {
-			mapServiceCodeToken[ value.service_code + "-" + value.token ]['totalLog']++
-		}
-		mapServiceCodeToken[ value.service_code + "-" + value.token ]['totalPrice'] = mapServiceCodeToken[ value.service_code + "-" + value.token ]['price'] * mapServiceCodeToken[ value.service_code + "-" + value.token ]['totalLog']
 	})
+
+	listServiceCode = [...new Set(listServiceCode)]
+	listServiceCode.forEach( serviceCode => {
+		const listServiceLog = await db.collection("service_logs").find({
+			service_code: serviceCode
+		}).toArray()
+
+		let mapServiceCodeToken = {}
+
+		listServiceLog.forEach(value => {
+			if( !mapServiceCodeToken[ value.service_code + "-" + value.token ] ) {
+				mapServiceCodeToken[ value.service_code + "-" + value.token ] = {}
+			 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['totalLog'] = 1		
+			 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['price'] = value.price
+			 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['data'] = []
+			 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['data'].push(value)
+			 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['totalPrice'] = 0
+			 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['token'] = value.token
+			 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['service_code'] = value.service_code
+			 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['type'] = value.type
+			} else {
+				mapServiceCodeToken[ value.service_code + "-" + value.token ]['totalLog']++
+			}
+			mapServiceCodeToken[ value.service_code + "-" + value.token ]['totalPrice'] = mapServiceCodeToken[ value.service_code + "-" + value.token ]['price'] * mapServiceCodeToken[ value.service_code + "-" + value.token ]['totalLog']
+		})
+
+		
+		insertDailyStat( Object.values(mapServiceCodeToken) ).then(data => {  
+			console.log(data)
+		})
+	});
+	// const listServiceLog = await db.collection("service_logs").find({
+	// 	service_code: { $in: listServiceCode }
+	// }).count()
+	// console.log(listServiceLog)
+	// let mapServiceCodeToken = {}
+
+	// listServiceLog.forEach(value => {
+	// 	if( !mapServiceCodeToken[ value.service_code + "-" + value.token ] ) {
+	// 		mapServiceCodeToken[ value.service_code + "-" + value.token ] = {}
+	// 	 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['totalLog'] = 1		
+	// 	 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['price'] = value.price
+	// 	 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['data'] = []
+	// 	 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['data'].push(value)
+	// 	 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['totalPrice'] = 0
+	// 	 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['token'] = value.token
+	// 	 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['service_code'] = value.service_code
+	// 	 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['type'] = value.type
+	// 	} else {
+	// 		mapServiceCodeToken[ value.service_code + "-" + value.token ]['totalLog']++
+	// 	}
+	// 	mapServiceCodeToken[ value.service_code + "-" + value.token ]['totalPrice'] = mapServiceCodeToken[ value.service_code + "-" + value.token ]['price'] * mapServiceCodeToken[ value.service_code + "-" + value.token ]['totalLog']
+	// })
 
 	
-	insertDailyStat( Object.values(mapServiceCodeToken) ).then(data => {  
-		console.log(data)
-	})
+	// insertDailyStat( Object.values(mapServiceCodeToken) ).then(data => {  
+	// 	console.log(data)
+	// })
 }
 
 
