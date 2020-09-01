@@ -19,12 +19,13 @@ client.on('error', (err) => {
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async () => {
 		console.log("Connect success")
+		await pushDataService()
 	}) 
 	.catch((error) => {
 		console.log("connect error"+error)
 	})
 cron.schedule('*/5 * * * *', async() => {
-	await pushDataService()
+	// await pushDataService()
 })
 
 const waitFor = (ms) => new Promise(r => setTimeout(r, ms))
@@ -42,18 +43,15 @@ const pushDataService = async() => {
 	console.log(startDay, endDay)
 
 	let listServiceCode = await db.collection("services").distinct("service_code", {
-		created_at: {
-	        $gte: 1598806800000,
-	        $lt: 1598893199999
-	    }
+		status: "Active"
 	})
 
 	listServiceCode = [...new Set(listServiceCode)]
 	const listServiceLog = await db.collection("service_logs").find({
 		service_code: { $in: listServiceCode },
 		createdAt: {
-	        $gte: 1598806800000,
-	        $lt: 1598893199999
+	        $gte: startDay,
+	        $lt: endDay
 	    }
 	}).toArray()
 
@@ -84,17 +82,21 @@ const pushDataService = async() => {
 
 
 function insertDailyStat(listServiceCodeToken) {
-	 return new Promise((resolve, reject) => {
-       let results = [];
-       let completed = 0;
+	return new Promise((resolve, reject) => {
+       	let results = [];
+       	let completed = 0;
+       	//Tinh thoi gian bat dau trong ngay
+		var start = new Date();
+		start.setHours(0,0,0,0);
+		var startDay = start.valueOf()
        
-       listServiceCodeToken.forEach((value, index) => {
+       	listServiceCodeToken.forEach((value, index) => {
        		let paramUpdate = {
        			token: value.token,
 				service_code:value.service_code,
 				type: value.type,
 				price: value.price,
-				startTime:1598806800000
+				startTime:startDay
        		}
 
        		let paramInsert = {
