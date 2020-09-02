@@ -18,6 +18,7 @@ client.on('error', (err) => {
 
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async () => {
+		await pushDataServiceLog()
 		console.log("Connect success")
 	}) 
 	.catch((error) => {
@@ -25,7 +26,7 @@ mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: t
 	})
 
 cron.schedule('*/5 * * * *', async() => {
-	await pushDataServiceLog()
+	// await pushDataServiceLog()
 	
 })
 
@@ -50,6 +51,7 @@ const pushDataServiceLog = async() => {
 
 	for(const token of listTokens) {
 		try {
+			console.log('abc')
 			const likepageCount = await db.collection("service_logs").find({
 				token:token,
 				createdAt: {
@@ -67,39 +69,33 @@ const pushDataServiceLog = async() => {
 			    },
 			    type: "follow"
 			}).count()
-			await db.collection("daily_today").updateOne({
+
+			await db.collection("daily_today").findOneAndUpdate({
 				token:token,
 				type:"follow",
-				price:26,
 				startTime:startDay,
+				price:26
 			}, {
-					$setOnInsert: {
-						total:followCount,
-						amount:followCount * 26,
-						updated_at:new Date().valueOf()
-					}
-				},
-				{
-					upsert: true
+				$set: {
+					total:followCount,
+					amount:followCount * 26,
+					updated_at:new Date().valueOf()
 				}
-			)	
+			}, {upsert: true})
 
-			await db.collection("daily_today").updateOne({
+
+			await db.collection("daily_today").findOneAndUpdate({
 				token:token,
 				type:"likepage",
-				price:47,
 				startTime:startDay,
+				price:47
 			}, {
-					$setOnInsert: {
-						total:likepageCount,
-						amount:likepageCount * 47,
-						updated_at:new Date().valueOf()
-					}
-				},
-				{
-					upsert: true
+				$set: {
+					total:likepageCount,
+					amount:likepageCount * 47,
+					updated_at:new Date().valueOf()
 				}
-			)	
+			}, {upsert: true})
 		} catch(e) {
 			console.log(e);
 		}
