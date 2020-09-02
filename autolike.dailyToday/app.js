@@ -67,7 +67,7 @@ const pushDataServiceLog = async() => {
 	});
 	
 	insertDailyStat( Object.values(mapServiceLog), startDay).then(data => {  
-		console.log('done')
+		console.log(data)
 	})
 
 }
