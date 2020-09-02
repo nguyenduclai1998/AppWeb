@@ -104,4 +104,5 @@ const pushDataServiceLog = async() => {
 			console.log(e);
 		}
 	}
+	console.log('insert done')
 }
