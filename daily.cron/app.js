@@ -26,7 +26,7 @@ mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: t
 	})
 
 cron.schedule('*/5 * * * *', async() => {
-	// console.log("------------dang chay cron------------")
+	// await pushDataServiceLog()
 	
 })
 
@@ -47,29 +47,29 @@ const pushDataServiceLog = async() => {
 	        $gte: 1598979600000,
 	        $lt: 1599065999999
 	    },
-	}).toArray()
-
-	let mapServiceLog = {}
-	listServiceLog.forEach( value => {
-		if( !mapServiceLog[ value.type + "-" + value.token ] ) {
-			mapServiceLog[ value.type + "-" + value.token ] = {}
-		 	mapServiceLog[ value.type + "-" + value.token ]['totalLog'] = 1		
-		 	mapServiceLog[ value.type + "-" + value.token ]['price'] = value.price
-		 	mapServiceLog[ value.type + "-" + value.token ]['data'] = []
-		 	mapServiceLog[ value.type + "-" + value.token ]['data'].push(value)
-		 	mapServiceLog[ value.type + "-" + value.token ]['totalPrice'] = 0
-		 	mapServiceLog[ value.type + "-" + value.token ]['token'] = value.token
-		 	mapServiceLog[ value.type + "-" + value.token ]['service_code'] = value.service_code
-		 	mapServiceLog[ value.type + "-" + value.token ]['type'] = value.type
-		} else {
-			mapServiceLog[ value.type + "-" + value.token ]['totalLog']++
-		}
-		mapServiceLog[ value.type + "-" + value.token ]['totalPrice'] = mapServiceLog[ value.type + "-" + value.token ]['price'] * mapServiceLog[ value.type + "-" + value.token ]['totalLog']
-	});
+	}).count()
+	// console.log(listServiceLog.length)
+	// let mapServiceLog = {}
+	// listServiceLog.forEach( value => {
+	// 	if( !mapServiceLog[ value.type + "-" + value.token ] ) {
+	// 		mapServiceLog[ value.type + "-" + value.token ] = {}
+	// 	 	mapServiceLog[ value.type + "-" + value.token ]['totalLog'] = 1		
+	// 	 	mapServiceLog[ value.type + "-" + value.token ]['price'] = value.price
+	// 	 	mapServiceLog[ value.type + "-" + value.token ]['data'] = []
+	// 	 	mapServiceLog[ value.type + "-" + value.token ]['data'].push(value)
+	// 	 	mapServiceLog[ value.type + "-" + value.token ]['totalPrice'] = 0
+	// 	 	mapServiceLog[ value.type + "-" + value.token ]['token'] = value.token
+	// 	 	mapServiceLog[ value.type + "-" + value.token ]['service_code'] = value.service_code
+	// 	 	mapServiceLog[ value.type + "-" + value.token ]['type'] = value.type
+	// 	} else {
+	// 		mapServiceLog[ value.type + "-" + value.token ]['totalLog']++
+	// 	}
+	// 	mapServiceLog[ value.type + "-" + value.token ]['totalPrice'] = mapServiceLog[ value.type + "-" + value.token ]['price'] * mapServiceLog[ value.type + "-" + value.token ]['totalLog']
+	// });
 	
-	insertDailyStat( Object.values(mapServiceLog), startDay).then(data => {  
-		console.log(data)
-	})
+	// insertDailyStat( Object.values(mapServiceLog), startDay).then(data => {  
+	// 	console.log(data)
+	// })
 
 }
 
