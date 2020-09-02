@@ -19,14 +19,13 @@ client.on('error', (err) => {
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async () => {
 		console.log("Connect success")
-		await pushDataServiceLog()
 	}) 
 	.catch((error) => {
 		console.log("connect error"+error)
 	})
 
 cron.schedule('*/5 * * * *', async() => {
-	// await pushDataServiceLog()
+	await pushDataServiceLog()
 	
 })
 
@@ -42,66 +41,67 @@ const pushDataServiceLog = async() => {
 	end.setHours(23,59,59,999);
 	var endDay = end.valueOf()
 
-	const listServiceLog = await db.collection("service_logs").find({
+	const listTokens = await db.collection("service_logs").distinct("token",{
 		createdAt: {
-	        $gte: 1598979600000,
-	        $lt: 1599065999999
+	        $gte: startDay,
+	        $lt: endDay
 	    },
-	}).count()
-	// console.log(listServiceLog.length)
-	// let mapServiceLog = {}
-	// listServiceLog.forEach( value => {
-	// 	if( !mapServiceLog[ value.type + "-" + value.token ] ) {
-	// 		mapServiceLog[ value.type + "-" + value.token ] = {}
-	// 	 	mapServiceLog[ value.type + "-" + value.token ]['totalLog'] = 1		
-	// 	 	mapServiceLog[ value.type + "-" + value.token ]['price'] = value.price
-	// 	 	mapServiceLog[ value.type + "-" + value.token ]['data'] = []
-	// 	 	mapServiceLog[ value.type + "-" + value.token ]['data'].push(value)
-	// 	 	mapServiceLog[ value.type + "-" + value.token ]['totalPrice'] = 0
-	// 	 	mapServiceLog[ value.type + "-" + value.token ]['token'] = value.token
-	// 	 	mapServiceLog[ value.type + "-" + value.token ]['service_code'] = value.service_code
-	// 	 	mapServiceLog[ value.type + "-" + value.token ]['type'] = value.type
-	// 	} else {
-	// 		mapServiceLog[ value.type + "-" + value.token ]['totalLog']++
-	// 	}
-	// 	mapServiceLog[ value.type + "-" + value.token ]['totalPrice'] = mapServiceLog[ value.type + "-" + value.token ]['price'] * mapServiceLog[ value.type + "-" + value.token ]['totalLog']
-	// });
-	
-	// insertDailyStat( Object.values(mapServiceLog), startDay).then(data => {  
-	// 	console.log(data)
-	// })
+	})
 
-}
+	for(const token of listTokens) {
+		try {
+			const likepageCount = await db.collection("service_logs").find({
+				token:token,
+				createdAt: {
+			        $gte: startDay,
+			        $lt: endDay
+			    },
+			    type:"likepage"
+			}).count()
 
+			const followCount = await db.collection("service_logs").find({
+				token:token,
+				createdAt: {
+			        $gte: startDay,
+			        $lt: endDay
+			    },
+			    type: "follow"
+			}).count()
+			await db.collection("daily_today").updateOne({
+				token:token,
+				type:"follow",
+				price:26,
+				startTime:new Date(sActive.createdAt).valueOf(),
+			}, {
+					$setOnInsert: {
+						total:followCount,
+						amount:followCount * 26,
+						updated_at:new Date().valueOf()
+					}
+				},
+				{
+					upsert: true
+				}
+			)	
 
-function insertDailyStat(listServiceCodeToken, startDay) {
-	 return new Promise((resolve, reject) => {
-       	let results = [];
-       	let completed = 0;
-       
-       	listServiceCodeToken.forEach((value, index) => {
-       		let paramUpdate = {
-       			token: value.token,
-				type: value.type,
-				price: value.price,
-				startTime:startDay,
-       		}
-
-       		let paramInsert = {
-				total: value.totalLog,
-				amount: value.totalPrice,
-				updated_at:new Date().valueOf()
-       		}
-
-            Promise.resolve( db.collection("daily_today").updateOne(paramUpdate, {$setOnInsert: paramInsert},{ upsert: true}) )
-            .then(result => {
-                results[index] = result;
-                completed += 1;
-                
-                if (completed == listServiceCodeToken.length) {
-                    resolve(results);
-                }
-            }).catch(err => reject(err));
-       });
-    });
+			await db.collection("daily_today").updateOne({
+				token:token,
+				type:"likepage",
+				price:47,
+				startTime:new Date(sActive.createdAt).valueOf(),
+			}, {
+					$setOnInsert: {
+						total:likepageCount,
+						amount:likepageCount * 47,
+						updated_at:new Date().valueOf()
+					}
+				},
+				{
+					upsert: true
+				}
+			)	
+		} catch(e) {
+			console.log(e);
+		}
+	}
 }
