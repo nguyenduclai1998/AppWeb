@@ -71,7 +71,7 @@ const pushDataServiceLog = async() => {
 				token:token,
 				type:"follow",
 				price:26,
-				startTime:new Date(sActive.createdAt).valueOf(),
+				startTime:startDay,
 			}, {
 					$setOnInsert: {
 						total:followCount,
@@ -88,7 +88,7 @@ const pushDataServiceLog = async() => {
 				token:token,
 				type:"likepage",
 				price:47,
-				startTime:new Date(sActive.createdAt).valueOf(),
+				startTime:startDay,
 			}, {
 					$setOnInsert: {
 						total:likepageCount,
@@ -105,4 +105,7 @@ const pushDataServiceLog = async() => {
 		}
 	}
 	console.log('insert done')
+	console.log('UpdateTime:' + new Date().valueOf())
 }
+
+
