@@ -26,8 +26,8 @@ mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: t
 cron.schedule('*/5 * * * *', async() => {
 	const tokenDailyStat = await db.collection("daily_stat").distinct("token", {
 		closedTime: {
-			$gte:parseInt(new Date().valueOf()) - parseInt(259200000),
-			$lt:new Date().valueOf()
+			$gte:1598806800000,
+			$lt:1598893200000
 		}
 	})
 	for(const token of tokenDailyStat) {
