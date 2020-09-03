@@ -44,8 +44,8 @@ const pushDataServiceLogs = async() => {
 					$exists: false
 				},
 				closedTime: {
-					$gte:1597708800000,
-					$lt:1597968000000
+					$gte:1598806800000,
+					$lt:1598893200000
 				}
 				
 			}).limit(5000).toArray()
