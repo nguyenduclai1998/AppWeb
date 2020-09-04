@@ -18,14 +18,14 @@ client.on('error', (err) => {
 
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async () => {
-		await pushDataService()
+        await pushDataService()
 		console.log("Connect success");
 	}) 
 	.catch((error) => {
 		console.log("connect error"+error)
 	})
-cron.schedule('*/120 * * * * *', async() => {
-	// await pushDataService()
+cron.schedule('*/15 * * * *', async() => {
+//	await pushDataService()
 })
 
 cron.schedule('*/2 * * * * *', async() => {
@@ -35,14 +35,13 @@ cron.schedule('*/2 * * * * *', async() => {
 const waitFor = (ms) => new Promise(r => setTimeout(r, ms))
 
 const pushDataService = async() => {
-
 	const tokenServiceLogs = await db.collection("service_logs").distinct("token",{});
 	for(const token of tokenServiceLogs) {
 		const dataServiceLogs = await db.collection("service_logs").distinct("service_code",{
 			token:token,
 			closedTime:{
-				$gte: 1598745600000,
-				$lt: 1598832000000
+				$gte: 1598979600000,
+				$lt: 1599066000000
 			}})
 		console.log("adas" + dataServiceLogs.length)
 		let tongTien = 0;
@@ -55,7 +54,7 @@ const pushDataService = async() => {
 			const dataServices = await db.collection("services").findOne({service_code:item});
 			console.log("token: "+token + ", service_code:" +item, +", Ngay hoan thanh:"+dataServiceLog.finishTime)
 			
-			await db.collection("daily_stat").updateOne({
+			await db.collection("daily_stat").findOneAndUpdate({
 				token:token,
 				service_code:item,
 				type:dataServiceLog.type,
@@ -66,7 +65,7 @@ const pushDataService = async() => {
 				finishTimeISO:dataServiceLog.finishTimeISO,
 				status:"Closed",
 			}, {
-				$setOnInsert: {
+				$set: {
 					total:serviceCodeCount,
 					amount:parseInt(dataServiceLog.price) * parseInt(serviceCodeCount),
 				}},
