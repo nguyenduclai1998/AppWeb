@@ -42,66 +42,68 @@ const pushDataServiceLog = async() => {
 	end.setHours(23,59,59,999);
 	var endDay = end.valueOf()
 
-	const listTokens = await db.collection("service_logs").distinct("token",{
+	const listServiceLogs = await db.collection("service_logs").find({
 		createdAt: {
 	        $gte: startDay,
 	        $lt: endDay
 	    },
+	}).toArray();
+
+	let mapServiceLog = {}
+	listServiceLogs.forEach( value => {
+		if( !mapServiceLog[ value.type + "-" + value.token ] ) {
+			mapServiceLog[ value.type + "-" + value.token ] = {}
+		 	mapServiceLog[ value.type + "-" + value.token ]['totalLog'] = 1		
+		 	mapServiceLog[ value.type + "-" + value.token ]['price'] = value.price
+		 	mapServiceLog[ value.type + "-" + value.token ]['data'] = []
+		 	mapServiceLog[ value.type + "-" + value.token ]['data'].push(value)
+		 	mapServiceLog[ value.type + "-" + value.token ]['totalPrice'] = 0
+		 	mapServiceLog[ value.type + "-" + value.token ]['token'] = value.token
+		 	mapServiceLog[ value.type + "-" + value.token ]['type'] = value.type
+		} else {
+			mapServiceLog[ value.type + "-" + value.token ]['totalLog']++
+		}
+		mapServiceLog[ value.type + "-" + value.token ]['totalPrice'] = mapServiceLog[ value.type + "-" + value.token ]['price'] * mapServiceLog[ value.type + "-" + value.token ]['totalLog']
+	});
+	insertDailyStat( Object.values(mapServiceLog), startDay).then(data => {  
+		console.log('xong 1 service')
 	})
 
-	for(const token of listTokens) {
-		try {
-			console.log('abc')
-			const likepageCount = await db.collection("service_logs").find({
-				token:token,
-				createdAt: {
-			        $gte: startDay,
-			        $lt: endDay
-			    },
-			    type:"likepage"
-			}).count()
-
-			const followCount = await db.collection("service_logs").find({
-				token:token,
-				createdAt: {
-			        $gte: startDay,
-			        $lt: endDay
-			    },
-			    type: "follow"
-			}).count()
-
-			await db.collection("daily_today").findOneAndUpdate({
-				token:token,
-				type:"follow",
-				startTime:startDay,
-				price:26
-			}, {
-				$set: {
-					total:followCount,
-					amount:followCount * 26,
-					updated_at:new Date().valueOf()
-				}
-			}, {upsert: true})
-
-
-			await db.collection("daily_today").findOneAndUpdate({
-				token:token,
-				type:"likepage",
-				startTime:startDay,
-				price:47
-			}, {
-				$set: {
-					total:likepageCount,
-					amount:likepageCount * 47,
-					updated_at:new Date().valueOf()
-				}
-			}, {upsert: true})
-		} catch(e) {
-			console.log(e);
-		}
-	}
+	
 	console.log('insert done')
 	console.log('UpdateTime:' + new Date().valueOf())
+}
+
+function insertDailyStat(listServiceCodeToken, startDay) {
+	 return new Promise((resolve, reject) => {
+       	let results = [];
+       	let completed = 0;
+       
+       	listServiceCodeToken.forEach((value, index) => {
+       		let paramUpdate = {
+       			token: value.token,
+				type: value.type,
+				startTime: startDay
+       		}
+
+       		let paramInsert = {
+       			price: value.price,
+				total: value.totalLog,
+				amount: value.totalPrice,
+				updated_at:new Date().valueOf()
+       		}
+
+            Promise.resolve( db.collection("daily_statss_test").findOneAndUpdate(paramUpdate, {$set: paramInsert},{ upsert: true}) )
+            .then(result => {
+                results[index] = result;
+                completed += 1;
+                
+                if (completed == listServiceCodeToken.length) {
+                    resolve(results);
+                }
+            }).catch(err => reject(err));
+       });
+    });
 }
 
 
