@@ -17,13 +17,19 @@ client.on('error', (err) => {
 })
 
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
-	.then(() => {
+	.then(async() => {
 		console.log("Connect success");
+		await wanrranty()
+		console.log("done 5/9")
 	}) 
 	.catch((error) => {
 		console.log("connect error" + error)
 	})
 cron.schedule('*/5 * * * *', async() => {
+	
+})
+
+const wanrranty = async() => {
 	const tokenDailyStat = await db.collection("daily_stat").distinct("token", {
 		closedTime: {
 			$gte:1599238800000,
@@ -53,5 +59,5 @@ cron.schedule('*/5 * * * *', async() => {
 			console.log(updateDaily)
 		}
 	}
-})
+}
 const waitFor = (ms) => new Promise(r => setTimeout(r, ms))
