@@ -25,11 +25,11 @@ mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: t
 	.catch((error) => {
 		console.log("connect error")
 	})
-cron.schedule('*/30 * * * * *', async() => {
+cron.schedule('*/1 * * * *', async() => {
 	await pushDataServiceLogs();
 })
 
-cron.schedule('*/5 * * * * *', async() => {
+cron.schedule('*/35 * * * * *', async() => {
 	await popDataServiceLogs();
 })
 
@@ -43,8 +43,8 @@ const pushDataServiceLogs = async() => {
 
 			const dataServiceLogs = await db.collection("service_logs").distinct("uid",{
 			    finishTime: {
-			        $gte:1598374800000,
-			        $lt: 1598461200000
+			        $gte:1599238800000,
+			        $lt: 1599325200000
 			    },
 			    checked: {
 			        $exists: false
@@ -58,8 +58,8 @@ const pushDataServiceLogs = async() => {
 					await db.collection("service_logs").updateMany({
 						uid:item,
 						finishTime: {
-					        $gte:1598374800000,
-					        $lt: 1598461200000
+					        $gte:1599238800000,
+					        $lt: 1599325200000
 					    }}, {
 					    	$set:{
 					    		checked: true
@@ -106,8 +106,8 @@ const popDataServiceLogs = async() => {
 					await db.collection("service_logs").updateMany({
 						uid:uid,
 						finishTime: {
-					        $gte:1598374800000,
-					        $lt: 1598461200000
+					        $gte:1599238800000,
+					        $lt: 1599325200000
 					    }
 					}, {
 						$set: updateStatus
