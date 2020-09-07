@@ -43,8 +43,8 @@ const pushDataServiceLogs = async() => {
 
 			const dataServiceLogs = await db.collection("service_logs").distinct("uid",{
 			    closedTime: {
-			        $gte:1599238800000,
-			        $lt: 1599325200000
+			        $gte:1599411600000,
+			        $lt: 1599498000000
 			    },
 			    checked: {
 			        $exists: false
@@ -58,8 +58,8 @@ const pushDataServiceLogs = async() => {
 					await db.collection("service_logs").updateMany({
 						uid:item,
 						closedTime: {
-					        $gte:1599238800000,
-					        $lt: 1599325200000
+					        $gte:1599411600000,
+					        $lt: 1599498000000
 					    }}, {
 					    	$set:{
 					    		checked: true
@@ -106,8 +106,8 @@ const popDataServiceLogs = async() => {
 					await db.collection("service_logs").updateMany({
 						uid:uid,
 						closedTime: {
-					        $gte:1599238800000,
-					        $lt: 1599325200000
+					        $gte:1599411600000,
+					        $lt: 1599498000000
 					    }
 					}, {
 						$set: updateStatus
