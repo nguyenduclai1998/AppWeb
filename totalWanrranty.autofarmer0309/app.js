@@ -42,7 +42,7 @@ const wanrranty = async() => {
 	}).toArray()
 
 	let mapServiceLog = {}
-	listServiceLogs.forEach( value => {
+	totalWanrranty.forEach( value => {
 		if( !mapServiceLog[ value.service_code + "-" + value.token ] ) {
 			mapServiceLog[ value.service_code + "-" + value.token ] = {}
 		 	mapServiceLog[ value.service_code + "-" + value.token ]['totalLog'] = 1		
@@ -75,7 +75,7 @@ function insertDailyStat(listServiceCodeToken, startDay) {
 
        		let paramInsert = {
        			totalWanrranty:value.totalLog,
-       			warrantyCosts:value.totalPrice,
+       			warrantyCosts:value.listServiceLogs,
 				updated_at:new Date().valueOf()
        		}
 
