@@ -75,7 +75,7 @@ function insertDailyStat(listServiceCodeToken, startDay) {
 
        		let paramInsert = {
        			totalWanrranty:value.totalLog,
-       			warrantyCosts:value.listServiceLogs,
+       			warrantyCosts:value.totalPrice,
 				updated_at:new Date().valueOf()
        		}
 
