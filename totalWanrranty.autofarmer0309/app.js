@@ -28,36 +28,69 @@ mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: t
 cron.schedule('*/5 * * * *', async() => {
 	
 })
-
 const wanrranty = async() => {
-	const tokenDailyStat = await db.collection("daily_stat").distinct("token", {
-		closedTime: {
+	const totalWanrranty = await db.collection("service_logs").find({
+	    $or: [{
+	        checkpoint: true
+	    }, {
+	        hasavatar: false
+	    }],
+	    closedTime: {
 			$gte:1599152400000,
 			$lt:1599238800000
 		}
-	})
-	for(const token of tokenDailyStat) {
-		const serviceCodeDailyStat = await db.collection("daily_stat").distinct("service_code", {status:"Closed", token:token})
-		for(const serviceCode of serviceCodeDailyStat) {
-			const dailyStat = await db.collection("daily_stat").findOne({token:token, service_code:serviceCode})
-			const totalWanrranty = await db.collection("service_logs").find({
-			    service_code: serviceCode,
-			    token: token,
-			    $or: [{
-			        checkpoint: true
-			    }, {
-			        hasavatar: false
-			    }]
-			}).count()
-			const updateDaily = {
-				totalWanrranty: totalWanrranty,
-				amount: parseInt(dailyStat.price) * parseInt(dailyStat.total),
-				warrantyCosts: parseInt(totalWanrranty) * parseInt(dailyStat.price)
-			}
-			await db.collection("daily_stat").updateOne({token:token, service_code:serviceCode}, {$set:updateDaily})
-			console.log("token:" + token + ",service_code" + serviceCode + "tong bao hanh:" +totalWanrranty )
-			console.log(updateDaily)
+	}).toArray()
+
+	let mapServiceLog = {}
+	listServiceLogs.forEach( value => {
+		if( !mapServiceLog[ value.service_code + "-" + value.token ] ) {
+			mapServiceLog[ value.service_code + "-" + value.token ] = {}
+		 	mapServiceLog[ value.service_code + "-" + value.token ]['totalLog'] = 1		
+		 	mapServiceLog[ value.service_code + "-" + value.token ]['price'] = value.price
+		 	mapServiceLog[ value.service_code + "-" + value.token ]['data'] = []
+		 	mapServiceLog[ value.service_code + "-" + value.token ]['data'].push(value)
+		 	mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = 0
+		 	mapServiceLog[ value.service_code + "-" + value.token ]['token'] = value.token
+		 	mapServiceLog[ value.service_code + "-" + value.token ]['service_code'] = value.service_code
+		} else {
+			mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']++
 		}
-	}
+		mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = mapServiceLog[ value.service_code + "-" + value.token ]['price'] * mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']
+	});
+	insertDailyStat( Object.values(mapServiceLog)).then(data => {  
+		console.log('xong 1 service')
+	})
 }
-const waitFor = (ms) => new Promise(r => setTimeout(r, ms))
+
+function insertDailyStat(listServiceCodeToken, startDay) {
+	 return new Promise((resolve, reject) => {
+       	let results = [];
+       	let completed = 0;
+       
+       	listServiceCodeToken.forEach((value, index) => {
+       		let paramUpdate = {
+       			token: value.token,
+				service_code:value.service_code,
+       		}
+
+       		let paramInsert = {
+       			totalWanrranty:value.totalLog,
+       			warrantyCosts:value.totalPrice,
+				updated_at:new Date().valueOf()
+       		}
+
+            Promise.resolve( db.collection("daily_stat").findOneAndUpdate(paramUpdate, {$set: paramInsert},{ upsert: true}) )
+            .then(result => {
+                results[index] = result;
+                completed += 1;
+                
+                if (completed == listServiceCodeToken.length) {
+                    resolve(results);
+                }
+            }).catch(err => reject(err));
+       });
+    });
+}
+
+
+
