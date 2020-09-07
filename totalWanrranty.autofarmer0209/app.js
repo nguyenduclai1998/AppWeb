@@ -51,7 +51,7 @@ const wanrranty = async() => {
 			}).count()
 			const updateDaily = {
 				totalWanrranty: totalWanrranty,
-				amount: (parseInt(dailyStat.price) * parseInt(dailyStat.total)) - (parseInt(totalWanrranty) * parseInt(dailyStat.price)),
+				amount: parseInt(dailyStat.price) * parseInt(dailyStat.total),
 				warrantyCosts: parseInt(totalWanrranty) * parseInt(dailyStat.price)
 			}
 			await db.collection("daily_stat").updateOne({token:token, service_code:serviceCode}, {$set:updateDaily})
