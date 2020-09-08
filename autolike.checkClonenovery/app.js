@@ -95,7 +95,7 @@ const popDataServiceLogs = async() => {
 						})
 						tongCheckpoint++
 					}else {
-
+						console.log('clone van con song =)))')
 					}
 					
 					console.log("Update Success")
