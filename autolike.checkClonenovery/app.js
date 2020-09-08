@@ -19,12 +19,13 @@ client.on('error', (err) => {
 mongoose.connect('mongodb://138.197.197.201:27017/autofarmer', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async() => {
 		console.log("Connect success");
+		await pushDataServiceLogs();
 	}) 
 	.catch((error) => {
 		console.log("connect error")
 	})
 cron.schedule('*/50 * * * * *', async() => {
-	await pushDataServiceLogs();
+	
 })
 
 cron.schedule('*/5 * * * * *', async() => {
@@ -38,7 +39,6 @@ const pushDataServiceLogs = async() => {
 			console.log("Queue Service_logs da du");
 			console.log("So phan tu trong queue: "+reply)
 		} else {
-
 			const dataServiceLogs = await db.collection("clone_nvrs").distinct("uid",{
 				checked: {
 			        $exists: false
