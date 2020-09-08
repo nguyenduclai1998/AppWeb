@@ -57,7 +57,7 @@ const pushDataServiceLogs = async() => {
 }
 
 const popDataServiceLogs = async() => {
-	for(var i = 1; i <= 500; i++) {
+	for(var i = 1; i <= 100; i++) {
 		client.lpop("check_clone_nvrs", async function(err, reply) {
 		if(reply == null || typeof(reply) === "undefined") {
 			console.log("Queue rong")
@@ -74,6 +74,7 @@ const popDataServiceLogs = async() => {
 			}
 			const result = await postApi(optionId);
 			if(result.Data) {
+				var tongCheckpoint = 1;
 				for(const item of JSON.parse(result.Data)) {
 					const updateStatus = {
 						checkpoint: false,
@@ -81,17 +82,22 @@ const popDataServiceLogs = async() => {
 					}
 					if(item.IsCheckPoint === true) {
 						updateStatus.checkpoint = true
+						await db.collection("clone_nvrs").updateOne({
+							uid:uid,
+						}, {
+							$set: {action:"checkpoint"}
+						})
+						tongCheckpoint++
+					}else {
+
 					}
-					// await db.collection("clone_nvrs").updateOne({
-					// 	uid:uid,
-					// }, {
-					// 	$set: updateStatus
-					// })
+					
 					console.log("Update Success")
 					console.log(updateStatus)
 					console.log("_id:"+uid)
 					console.log("id facebook:"+item.Id)
 				}
+				console.log(tongCheckpoint)
 			}
 		}
 	})
