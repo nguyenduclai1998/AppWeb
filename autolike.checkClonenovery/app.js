@@ -48,7 +48,7 @@ const pushDataServiceLogs = async() => {
 				console.log('Het data')
 			} else {
 				for(const item of dataServiceLogs) {
-					await db.collection("service_logs").updateOne({uid:item}, 
+					await db.collection("clone_nvrs").updateOne({uid:item}, 
 					    {
 					    	$set:{
 					    		checked: true
