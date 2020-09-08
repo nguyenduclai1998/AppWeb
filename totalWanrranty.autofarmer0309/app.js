@@ -36,8 +36,8 @@ const wanrranty = async() => {
 	        hasavatar: false
 	    }],
 	    closedTime: {
-			$gte: 1599325200000,
-			$lt: 1599411600000
+			$gte: 1599411600000,
+			$lt: 1599498000000
 		}
 	}).toArray()
 
