@@ -41,7 +41,7 @@ const pushDataServiceLogs = async() => {
 
 			const dataServiceLogs = await db.collection("clone_nvrs").distinct("uid",{
 				checked: {
-			        $exists: true
+			        $exists: false
 			    }
 			})
 			if(dataServiceLogs == 0) {
