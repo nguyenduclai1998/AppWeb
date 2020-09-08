@@ -48,12 +48,6 @@ const pushDataServiceLogs = async() => {
 				console.log('Het data')
 			} else {
 				for(const item of dataServiceLogs) {
-					await db.collection("clone_nvrs").updateOne({uid:item}, 
-					    {
-					    	$set:{
-					    		checked: true
-					    	}
-					    })
 					client.rpush("check_clone_nvrs", JSON.stringify(item), function (err, reply){
 
 					});
