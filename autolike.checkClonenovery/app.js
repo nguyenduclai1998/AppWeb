@@ -19,13 +19,12 @@ client.on('error', (err) => {
 mongoose.connect('mongodb://138.197.197.201:27017/autofarmer', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async() => {
 		console.log("Connect success");
-		await pushDataServiceLogs();
 	}) 
 	.catch((error) => {
 		console.log("connect error")
 	})
-cron.schedule('*/30 * * * * *', async() => {
-	
+cron.schedule('*/50 * * * * *', async() => {
+	await pushDataServiceLogs();
 })
 
 cron.schedule('*/5 * * * * *', async() => {
@@ -41,12 +40,20 @@ const pushDataServiceLogs = async() => {
 		} else {
 
 			const dataServiceLogs = await db.collection("clone_nvrs").distinct("uid",{
-
+				checked: {
+			        $exists: true
+			    }
 			})
 			if(dataServiceLogs == 0) {
 				console.log('Het data')
 			} else {
 				for(const item of dataServiceLogs) {
+					await db.collection("service_logs").updateOne({uid:item}, 
+					    {
+					    	$set:{
+					    		checked: true
+					    	}
+					    })
 					client.rpush("check_clone_nvrs", JSON.stringify(item), function (err, reply){
 
 					});
@@ -62,7 +69,6 @@ const popDataServiceLogs = async() => {
 		if(reply == null || typeof(reply) === "undefined") {
 			console.log("Queue rong")
 		} else {
-			console.log("So phan tu trong queue: "+reply)
 			const uid = JSON.parse(reply)
 			const optionId = {
 				uri: "http://scorpion.esrax.com/?method=CheckProfiles&object=Api.Facebook&ids="+uid,
