@@ -19,15 +19,23 @@ client.on('error', (err) => {
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async() => {
 		console.log("Connect success");
-		await wanrranty();
-		console.log("Done 8/9")
 	}) 
 	.catch((error) => {
 		console.log("connect error" + error)
 	})
-cron.schedule('*/5 * * * *', async() => {
-	
+cron.schedule('45 7 * * *', async() => {
+	await wanrranty()
 })
+
+var start = new Date();
+start.setHours(0,0,0,0);
+
+var end = new Date();
+end.setHours(23,59,59,999);
+
+var startDay = start.valueOf()
+var endDay = end.valueOf();
+
 const wanrranty = async() => {
 	const totalWanrranty = await db.collection("service_logs").find({
 	    $or: [{
@@ -35,9 +43,9 @@ const wanrranty = async() => {
 	    }, {
 	        hasavatar: false
 	    }],
-	    closedTime: {
-			$gte: 1599498000000,
-			$lt: 1599584400000
+	    closedTime:{
+			$gte:startDay - 86400000,
+			$lt: endDay - 86400000
 		}
 	}).toArray()
 
