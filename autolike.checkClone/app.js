@@ -25,13 +25,22 @@ mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: t
 	.catch((error) => {
 		console.log("connect error")
 	})
-cron.schedule('*/30 * * * * *', async() => {
+cron.schedule('30 1 * * *', async() => {
 	await pushDataServiceLogs();
 })
 
 cron.schedule('*/5 * * * * *', async() => {
 	await popDataServiceLogs();
 })
+
+var start = new Date();
+start.setHours(0,0,0,0);
+
+var end = new Date();
+end.setHours(23,59,59,999);
+
+var startDay = start.valueOf()
+var endDay = end.valueOf();
 
 const pushDataServiceLogs = async() => {
 	client.llen("check_clone", async function(err, reply) {
@@ -42,9 +51,9 @@ const pushDataServiceLogs = async() => {
 		} else {
 
 			const dataServiceLogs = await db.collection("service_logs").distinct("uid",{
-			    finishTime: {
-			        $gte:1598288400000,
-			        $lt: 1598374800000
+			    closedTime: {
+			        $gte:startDay - 86400000,
+			        $lt: endDay - 86400000
 			    },
 			    checked: {
 			        $exists: false
@@ -57,9 +66,9 @@ const pushDataServiceLogs = async() => {
 					await waitFor(50);
 					await db.collection("service_logs").updateMany({
 						uid:item,
-						finishTime: {
-					        $gte:1598288400000,
-					        $lt: 1598374800000
+						closedTime: {
+					        $gte:startDay - 86400000,
+			        		$lt: endDay - 86400000
 					    }}, {
 					    	$set:{
 					    		checked: true
@@ -105,9 +114,9 @@ const popDataServiceLogs = async() => {
 					}
 					await db.collection("service_logs").updateMany({
 						uid:uid,
-						finishTime: {
-					        $gte:1598288400000,
-					        $lt: 1598374800000
+						closedTime: {
+					        $gte:startDay - 86400000,
+			        		$lt: endDay - 86400000
 					    }
 					}, {
 						$set: updateStatus

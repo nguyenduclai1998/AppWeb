@@ -20,7 +20,7 @@ mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: t
 	.then(async() => {
 		console.log("Connect success");
 		await wanrranty();
-		console.log("Done 4/9")
+		console.log("Done 8/9")
 	}) 
 	.catch((error) => {
 		console.log("connect error" + error)
@@ -36,8 +36,8 @@ const wanrranty = async() => {
 	        hasavatar: false
 	    }],
 	    closedTime: {
-			$gte: 1599411600000,
-			$lt: 1599498000000
+			$gte: 1599498000000,
+			$lt: 1599584400000
 		}
 	}).toArray()
 
