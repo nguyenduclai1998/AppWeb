@@ -63,7 +63,7 @@ const pushDataServiceLog = async() => {
 		} else {
 			mapServiceLog[ value.type + "-" + value.token ]['totalLog']++
 		}
-		mapServiceLog[ value.type + "-" + value.token ]['totalPrice'] = mapServiceLog[ value.type + "-" + value.token ]['price'] * mapServiceLog[ value.type + "-" + value.token ]['totalLog']
+		mapServiceLog[ value.type + "-" + value.token ]['totalPrice'] = Math.floor(mapServiceLog[ value.type + "-" + value.token ]['price'] * mapServiceLog[ value.type + "-" + value.token ]['totalLog']*90/100)
 	});
 	insertDailyStat( Object.values(mapServiceLog), startDay).then(data => {  
 		console.log('xong 1 service')
@@ -86,7 +86,7 @@ function insertDailyStat(listServiceCodeToken, startDay) {
 
        		let paramInsert = {
        			price: value.price,
-				total: value.totalLog,
+				total: Math.floor(value.totalLog*90/100),
 				amount: value.totalPrice,
 				updated_at:new Date().valueOf()
        		}
