@@ -19,13 +19,12 @@ client.on('error', (err) => {
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async() => {
 		console.log("Connect success");
-		await wanrranty()
 	}) 
 	.catch((error) => {
 		console.log("connect error" + error)
 	})
-cron.schedule('45 7 * * *', async() => {
-	// await wanrranty()
+cron.schedule('45 07 * * *', async() => {
+	await wanrranty()
 })
 
 var start = new Date();
