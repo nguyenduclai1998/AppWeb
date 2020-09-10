@@ -68,8 +68,6 @@ const pushDataServiceLog = async() => {
 	insertDailyStat( Object.values(mapServiceLog), startDay).then(data => {  
 		console.log('xong 1 service')
 	})
-
-	
 	console.log('insert done')
 	console.log('UpdateTime:' + new Date().valueOf())
 }
