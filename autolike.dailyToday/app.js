@@ -18,6 +18,7 @@ client.on('error', (err) => {
 
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async () => {
+		//await pushDataServiceLog()
 		console.log("Connect success")
 	}) 
 	.catch((error) => {
@@ -25,8 +26,8 @@ mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: t
 	})
 
 cron.schedule('*/5 * * * *', async() => {
-	console.log("------------dang chay cron------------")
 	await pushDataServiceLog()
+	
 })
 
 const waitFor = (ms) => new Promise(r => setTimeout(r, ms))
@@ -41,15 +42,15 @@ const pushDataServiceLog = async() => {
 	end.setHours(23,59,59,999);
 	var endDay = end.valueOf()
 
-	const listServiceLog = await db.collection("service_logs").find({
+	const listServiceLogs = await db.collection("service_logs").find({
 		createdAt: {
-	        $gte: 1598979600000,
-	        $lt: 1599065999999
+	        $gte: startDay,
+	        $lt: endDay
 	    },
-	}).toArray()
+	}).toArray();
 
 	let mapServiceLog = {}
-	listServiceLog.forEach( value => {
+	listServiceLogs.forEach( value => {
 		if( !mapServiceLog[ value.type + "-" + value.token ] ) {
 			mapServiceLog[ value.type + "-" + value.token ] = {}
 		 	mapServiceLog[ value.type + "-" + value.token ]['totalLog'] = 1		
@@ -58,20 +59,18 @@ const pushDataServiceLog = async() => {
 		 	mapServiceLog[ value.type + "-" + value.token ]['data'].push(value)
 		 	mapServiceLog[ value.type + "-" + value.token ]['totalPrice'] = 0
 		 	mapServiceLog[ value.type + "-" + value.token ]['token'] = value.token
-		 	mapServiceLog[ value.type + "-" + value.token ]['service_code'] = value.service_code
 		 	mapServiceLog[ value.type + "-" + value.token ]['type'] = value.type
 		} else {
 			mapServiceLog[ value.type + "-" + value.token ]['totalLog']++
 		}
 		mapServiceLog[ value.type + "-" + value.token ]['totalPrice'] = mapServiceLog[ value.type + "-" + value.token ]['price'] * mapServiceLog[ value.type + "-" + value.token ]['totalLog']
 	});
-	
 	insertDailyStat( Object.values(mapServiceLog), startDay).then(data => {  
-		console.log(data)
+		console.log('xong 1 service')
 	})
-
+	console.log('insert done')
+	console.log('UpdateTime:' + new Date().valueOf())
 }
-
 
 function insertDailyStat(listServiceCodeToken, startDay) {
 	 return new Promise((resolve, reject) => {
@@ -82,17 +81,17 @@ function insertDailyStat(listServiceCodeToken, startDay) {
        		let paramUpdate = {
        			token: value.token,
 				type: value.type,
-				price: value.price,
-				startTime:startDay,
+				startTime: startDay
        		}
 
        		let paramInsert = {
+       			price: value.price,
 				total: value.totalLog,
 				amount: value.totalPrice,
 				updated_at:new Date().valueOf()
        		}
 
-            Promise.resolve( db.collection("daily_today").updateOne(paramUpdate, {$setOnInsert: paramInsert},{ upsert: true}) )
+            Promise.resolve( db.collection("daily_today").findOneAndUpdate(paramUpdate, {$set: paramInsert},{ upsert: true}) )
             .then(result => {
                 results[index] = result;
                 completed += 1;
@@ -104,3 +103,5 @@ function insertDailyStat(listServiceCodeToken, startDay) {
        });
     });
 }
+
+
