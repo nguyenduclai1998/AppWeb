@@ -23,11 +23,11 @@ mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: t
 	.catch((error) => {
 		console.log("connect error")
 	})
-cron.schedule('*/ 20 * * * * *', async() => {
+cron.schedule('*/1 * * * *', async() => {
 	await pushDataServiceLogs();
 })
 
-cron.schedule('*/5 * * * * *', async() => {
+cron.schedule('*/1 * * * *', async() => {
 	await popDataServiceLogs();
 })
 
@@ -86,7 +86,7 @@ const popDataServiceLogs = async() => {
 		client.lpop("check_clone", async function(err, reply) {
 		
 		if(reply == null || typeof(reply) === "undefined") {
-			console.log("Queue rong")
+			// console.log("Queue rong")
 		} else {
 			const uid = JSON.parse(reply)
 			const optionId = {
