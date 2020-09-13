@@ -23,6 +23,7 @@ mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: t
 	.catch((error) => {
 		console.log("connect error")
 	})
+
 cron.schedule('*/3 * * * *', async() => {
 	//await pushDataServiceLogs();
 })
