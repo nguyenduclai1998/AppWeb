@@ -25,8 +25,8 @@ await pushDataServiceLogs();
 		console.log("connect error")
 	})
 
-cron.schedule('*/3 * * * *', async() => {
-	//await pushDataServiceLogs();
+cron.schedule('*/60 * * * *', async() => {
+	await pushDataServiceLogs();
 })
 
 cron.schedule('*/1 * * * *', async() => {
@@ -49,7 +49,6 @@ const pushDataServiceLogs = async() => {
 			console.log("Queue Service_logs da du");
 			console.log("So phan tu trong queue: "+reply)
 		} else {
-
 			const dataServiceLogs = await db.collection("service_logs").distinct("uid",{
 			    closedTime: {
 			        $gte:startDay - 86400000,
@@ -59,7 +58,7 @@ const pushDataServiceLogs = async() => {
 			        $exists: false
 			    }
 			})
-			if(dataServiceLogs == 0) {
+			if(dataServiceLogs =< 0) {
 				console.log('Het data')
 			} else {
 				for(const item of dataServiceLogs) {
