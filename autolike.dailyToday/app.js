@@ -28,7 +28,11 @@ cron.schedule('*/10 * * * *', async() => {
 	await pushDataServiceLog()
 	
 })
-await dataServiceSuccess()
+
+cron.schedule('*/10 * * * *', async() => {
+	await dataServiceSuccess()
+	
+})
 
 const waitFor = (ms) => new Promise(r => setTimeout(r, ms))
 
