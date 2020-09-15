@@ -19,7 +19,6 @@ client.on('error', (err) => {
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async() => {
 		console.log("Connect success");
-await pushDataServiceLogs();
 	}) 
 	.catch((error) => {
 		console.log("connect error")
@@ -58,7 +57,7 @@ const pushDataServiceLogs = async() => {
 			        $exists: false
 			    }
 			})
-			if(dataServiceLogs =< 0) {
+			if(dataServiceLogs == 0) {
 				console.log('Het data')
 			} else {
 				for(const item of dataServiceLogs) {
