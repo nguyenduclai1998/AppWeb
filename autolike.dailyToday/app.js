@@ -181,7 +181,7 @@ function insertDailyStat(listServiceCodeToken, startDay) {
 				updated_at:new Date().valueOf()
        		}
 
-            Promise.resolve( db.collection("daily_today").findOneAndUpdate(paramUpdate, {$set: paramInsert},{ upsert: true}) )
+            Promise.resolve( db.collection("daily_stat").findOneAndUpdate(paramUpdate, {$set: paramInsert},{ upsert: true}) )
             .then(result => {
                 results[index] = result;
                 completed += 1;
