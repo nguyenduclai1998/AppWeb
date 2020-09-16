@@ -120,10 +120,11 @@ const dataServiceSuccess = async() => {
 		});
 
 		insertDailyStat( Object.values(mapServiceLog),startDay).then(data => {  
-			console.log('insert xong doanh thu ước tính')
-			console.log('UpdateTime:' + new Date())
+			
 		})
 	}
+	console.log('insert xong doanh thu ước tính')
+	console.log('UpdateTime:' + new Date())
 }
 
 function insertDailyToday(listServiceCodeToken, startDay) {
