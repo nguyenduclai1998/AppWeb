@@ -72,10 +72,9 @@ const pushDataServiceLog = async() => {
 		mapServiceLog[ value.type + "-" + value.token ]['totalPrice'] = mapServiceLog[ value.type + "-" + value.token ]['price'] * mapServiceLog[ value.type + "-" + value.token ]['totalLog']
 	});
 	insertDailyToday( Object.values(mapServiceLog), startDay).then(data => {  
-		console.log('xong 1 service')
+		console.log('insert xong sản lượng ước tính')
+		console.log('UpdateTime:' + new Date().toLocaleDateString())
 	})
-	console.log('insert done')
-	console.log('UpdateTime:' + new Date().valueOf())
 }
 
 const dataServiceSuccess = async() => {
@@ -121,10 +120,10 @@ const dataServiceSuccess = async() => {
 		});
 
 		insertDailyStat( Object.values(mapServiceLog),startDay).then(data => {  
-			
+			console.log('insert xong doanh thu ước tính')
+			console.log('UpdateTime:' + new Date().toLocaleDateString())
 		})
 	}
-	console.log('xong')
 }
 
 function insertDailyToday(listServiceCodeToken, startDay) {
