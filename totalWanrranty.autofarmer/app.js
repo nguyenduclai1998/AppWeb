@@ -67,7 +67,8 @@ const wanrranty = async() => {
 		mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = mapServiceLog[ value.service_code + "-" + value.token ]['price'] * mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']
 	});
 	insertDailyStat( Object.values(mapServiceLog)).then(data => {  
-		console.log('xong 1 service')
+		console.log('insert xong tổng bảo hành')
+		console.log('UpdateTime:' + new Date())
 	})
 }
 

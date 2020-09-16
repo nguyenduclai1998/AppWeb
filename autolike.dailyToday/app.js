@@ -73,7 +73,7 @@ const pushDataServiceLog = async() => {
 	});
 	insertDailyToday( Object.values(mapServiceLog), startDay).then(data => {  
 		console.log('insert xong sản lượng ước tính')
-		console.log('UpdateTime:' + new Date().toLocaleDateString())
+		console.log('UpdateTime:' + new Date())
 	})
 }
 
@@ -121,7 +121,7 @@ const dataServiceSuccess = async() => {
 
 		insertDailyStat( Object.values(mapServiceLog),startDay).then(data => {  
 			console.log('insert xong doanh thu ước tính')
-			console.log('UpdateTime:' + new Date().toLocaleDateString())
+			console.log('UpdateTime:' + new Date())
 		})
 	}
 }
