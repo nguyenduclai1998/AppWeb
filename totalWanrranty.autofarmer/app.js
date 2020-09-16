@@ -44,8 +44,8 @@ const wanrranty = async() => {
 	        hasavatar: false
 	    }],
 	    closedTime:{
-			$gte:startDay - 86400000,
-			$lt: endDay - 86400000
+			$gte:startDay - 172800000,
+			$lt: endDay - 172800000
 		}
 	}).toArray()
 
