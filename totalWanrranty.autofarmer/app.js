@@ -19,11 +19,12 @@ client.on('error', (err) => {
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async() => {
 		console.log("Connect success");
+		// await wanrranty()
 	}) 
 	.catch((error) => {
 		console.log("connect error" + error)
 	})
-cron.schedule('*/60 * * * *', async() => {
+cron.schedule('*/59 * * * *', async() => {
 	await wanrranty()
 })
 
@@ -37,38 +38,45 @@ var startDay = start.valueOf()
 var endDay = end.valueOf();
 
 const wanrranty = async() => {
-	const totalWanrranty = await db.collection("service_logs").find({
-	    $or: [{
-	        checkpoint: true
-	    }, {
-	        hasavatar: false
-	    }],
-	    closedTime:{
-			$gte:startDay - 172800000,
-			$lt: endDay - 172800000
-		}
-	}).toArray()
-
-	let mapServiceLog = {}
-	totalWanrranty.forEach( value => {
-		if( !mapServiceLog[ value.service_code + "-" + value.token ] ) {
-			mapServiceLog[ value.service_code + "-" + value.token ] = {}
-		 	mapServiceLog[ value.service_code + "-" + value.token ]['totalLog'] = 1		
-		 	mapServiceLog[ value.service_code + "-" + value.token ]['price'] = value.price
-		 	mapServiceLog[ value.service_code + "-" + value.token ]['data'] = []
-		 	mapServiceLog[ value.service_code + "-" + value.token ]['data'].push(value)
-		 	mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = 0
-		 	mapServiceLog[ value.service_code + "-" + value.token ]['token'] = value.token
-		 	mapServiceLog[ value.service_code + "-" + value.token ]['service_code'] = value.service_code
-		} else {
-			mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']++
-		}
-		mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = mapServiceLog[ value.service_code + "-" + value.token ]['price'] * mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']
-	});
-	insertDailyStat( Object.values(mapServiceLog)).then(data => {  
-		console.log('insert xong tổng bảo hành')
-		console.log('UpdateTime:' + new Date())
+	const serviceSuccess = await db.collection("services").distinct("service_code",{
+		TimeSuccess: {
+	        $gte: startDay - 691200000,
+	        $lt: endDay - 691200000
+	    },
+	    status: "Success"
 	})
+	for(const serviceCode of serviceSuccess) {
+		const totalWanrranty = await db.collection("service_logs").find({
+		    $or: [{
+		        checkpoint: true
+		    }, {
+		        hasavatar: false
+		    }],
+		    service_code:serviceCode
+		}).toArray()
+
+		let mapServiceLog = {}
+		totalWanrranty.forEach( value => {
+			if( !mapServiceLog[ value.service_code + "-" + value.token ] ) {
+				mapServiceLog[ value.service_code + "-" + value.token ] = {}
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['totalLog'] = 1		
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['price'] = value.price
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['data'] = []
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['data'].push(value)
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = 0
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['token'] = value.token
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['service_code'] = value.service_code
+			} else {
+				mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']++
+			}
+			mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = mapServiceLog[ value.service_code + "-" + value.token ]['price'] * mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']
+		});
+		insertDailyStat( Object.values(mapServiceLog)).then(data => {  
+			console.log(serviceCode)
+		})
+	}
+	console.log('insert xong tổng bảo hành')
+	console.log('UpdateTime:' + new Date())
 }
 
 function insertDailyStat(listServiceCodeToken, startDay) {
