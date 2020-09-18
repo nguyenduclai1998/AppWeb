@@ -1,0 +1,197 @@
+Connect success
+insert xong tổng bảo hành
+UpdateTime:Wed Sep 16 2020 11:02:23 GMT+0700 (+07)
+Connect success
+insert xong tổng bảo hành
+UpdateTime:Wed Sep 16 2020 12:02:20 GMT+0700 (+07)
+Connect success
+insert xong tổng bảo hành
+UpdateTime:Wed Sep 16 2020 13:02:31 GMT+0700 (+07)
+Connect success
+insert xong tổng bảo hành
+UpdateTime:Wed Sep 16 2020 14:01:06 GMT+0700 (+07)
+
+<--- Last few GCs --->
+
+[3348:0x2faf720]  8048384 ms: Scavenge 36.0 (41.8) -> 35.0 (41.8) MB, 1.6 / 0.0 ms  allocation failure 
+[3348:0x2faf720]  8312854 ms: Scavenge 36.0 (41.8) -> 35.0 (41.8) MB, 1.0 / 0.0 ms  allocation failure 
+[3348:0x2faf720]  8554074 ms: Scavenge 36.0 (41.8) -> 35.0 (41.8) MB, 0.9 / 0.0 ms  allocation failure 
+[3348:0x2faf720]  8797804 ms: Scavenge 36.0 (41.8) -> 35.0 (41.8) MB, 1.0 / 0.0 ms  allocation failure 
+
+
+<--- JS stacktrace --->
+
+==== JS stack trace =========================================
+
+Security context: 0x20488925891 <JSObject>
+    1: deserializeObject(aka deserializeObject) [/root/AppWeb/totalWanrranty.autofarmer/node_modules/bson/lib/bson/parser/deserializer.js:~43] [pc=0x6aa025225b8](this=0xdc0f12822d1 <undefined>,buffer=0x9ab6247fef1 <Uint8Array map = 0x3a9912fbbe01>,index=32,options=0x9ab6247fec1 <Object map = 0x11134a9edc31>,isArray=0xdc0f12823e1 <false>)
+    2: deserializeObject(aka deserializeObject) [/root/AppW...
+
+
+<--- Last few GCs --->
+
+[4488:0x2a97720]  4497951 ms: Scavenge 34.9 (41.3) -> 33.9 (41.3) MB, 0.9 / 0.0 ms  allocation failure 
+[4488:0x2a97720]  4752698 ms: Scavenge 34.9 (41.3) -> 33.9 (41.3) MB, 1.0 / 0.0 ms  allocation failure 
+[4488:0x2a97720]  4987942 ms: Scavenge 34.9 (41.3) -> 34.0 (41.3) MB, 0.9 / 0.0 ms  allocation failure 
+[4488:0x2a97720]  5224943 ms: Scavenge 35.0 (41.3) -> 34.0 (41.3) MB, 0.9 / 0.0 ms  allocation failure 
+
+
+<--- JS stacktrace --->
+
+==== JS stack trace =========================================
+
+Security context: 0x110473425891 <JSObject>
+    2: typedArrayConstructByArrayBuffer(aka typedArrayConstructByArrayBuffer)(this=0xfa10b8022d1 <undefined>)
+    3: new Uint8Array [native typedarray.js:~158] [pc=0x2e16410b0b8d](this=0x3f997dd7ffa1 <Uint8Array map = 0xcbfa39bbe01>,N=0x3f997dd7fda1 <ArrayBuffer map = 0xcbfa39830c9>,O=0,ae=4)
+    5: new FastBuffer(aka FastBuffer) [buffer.js:~37] [pc=0x2e16410b0fdb](this=0xfa10b802311 <the_hole>,...
+
+Connect success
+insert xong tổng bảo hành
+UpdateTime:Wed Sep 16 2020 15:01:55 GMT+0700 (+07)
+
+<--- Last few GCs --->
+
+[2284:0x2b6a720] 16164114 ms: Scavenge 36.5 (43.3) -> 35.6 (43.3) MB, 1.0 / 0.0 ms  allocation failure 
+[2284:0x2b6a720] 16409305 ms: Scavenge 36.5 (43.3) -> 35.6 (43.3) MB, 1.4 / 0.0 ms  allocation failure 
+[2284:0x2b6a720] 16664653 ms: Scavenge 36.6 (43.3) -> 35.6 (43.3) MB, 1.3 / 0.0 ms  allocation failure 
+[2284:0x2b6a720] 16918113 ms: Scavenge 36.6 (43.3) -> 35.6 (43.3) MB, 1.0 / 0.0 ms  allocation failure 
+
+
+<--- JS stacktrace --->
+
+==== JS stack trace =========================================
+
+Security context: 0x34fd9e25891 <JSObject>
+    1: split(this=0x219be05cc809 <String[83]: 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31>)
+    2: _onTimeout [/root/AppWeb/totalWanrranty.autofarmer/node_modules/node-cron/src/scheduled-task.js:~80] [pc=0xb56e19bf4b3](this=0x7f8c3dfeef1 <Timeout map = 0x32b35b494949>)
+    3: ontimeout(aka ontimeout) [timers.js:498] [bytecode=0x351618e400f1 offset=45](this=...
+
+Connect success
+insert xong tổng bảo hành
+UpdateTime:Wed Sep 16 2020 16:01:13 GMT+0700 (+07)
+Connect success
+insert xong tổng bảo hành
+UpdateTime:Wed Sep 16 2020 17:01:43 GMT+0700 (+07)
+
+<--- Last few GCs --->
+
+[5601:0x25a6720] 12577155 ms: Scavenge 35.4 (42.3) -> 34.4 (42.3) MB, 1.3 / 0.0 ms  allocation failure 
+[5601:0x25a6720] 12828157 ms: Scavenge 35.4 (42.3) -> 34.4 (42.3) MB, 1.5 / 0.0 ms  allocation failure 
+[5601:0x25a6720] 13072877 ms: Scavenge 35.4 (42.3) -> 34.4 (42.3) MB, 0.8 / 0.0 ms  allocation failure 
+[5601:0x25a6720] 13314158 ms: Scavenge 35.4 (42.3) -> 34.4 (42.3) MB, 1.1 / 0.0 ms  allocation failure 
+
+
+<--- JS stacktrace --->
+
+==== JS stack trace =========================================
+
+Security context: 0x5935b25891 <JSObject>
+    1: split(this=0x1e69b5d23ad9 <String[83]: 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31>)
+    2: _onTimeout [/root/AppWeb/totalWanrranty.autofarmer/node_modules/node-cron/src/scheduled-task.js:~80] [pc=0x16e3543b9433](this=0x327d9367dea9 <Timeout map = 0x2ce8ae9933f9>)
+    3: ontimeout(aka ontimeout) [timers.js:498] [bytecode=0x21daa82bdbf9 offset=45](this...
+
+ErrorError: Redis connection to 127.0.0.1:6379 failed - connect ECONNREFUSED 127.0.0.1:6379
+ErrorError: Redis connection to 127.0.0.1:6379 failed - connect ECONNREFUSED 127.0.0.1:6379
+ErrorError: Redis connection to 127.0.0.1:6379 failed - connect ECONNREFUSED 127.0.0.1:6379
+Connect success
+insert xong tổng bảo hành
+UpdateTime:Wed Sep 16 2020 19:01:20 GMT+0700 (+07)
+Connect success
+insert xong tổng bảo hành
+UpdateTime:Wed Sep 16 2020 20:08:53 GMT+0700 (+07)
+Connect success
+insert xong tổng bảo hành
+UpdateTime:Wed Sep 16 2020 21:09:33 GMT+0700 (+07)
+Connect success
+
+<--- Last few GCs --->
+
+[4936:0x3f05720]  3630254 ms: Scavenge 127.0 (155.8) -> 126.0 (155.8) MB, 1.4 / 0.0 ms  allocation failure 
+[4936:0x3f05720]  3871159 ms: Scavenge 127.0 (155.8) -> 126.0 (155.8) MB, 1.4 / 0.0 ms  allocation failure 
+[4936:0x3f05720]  4114382 ms: Scavenge 127.0 (155.8) -> 126.0 (155.8) MB, 1.4 / 0.0 ms  allocation failure 
+[4936:0x3f05720]  4361652 ms: Scavenge 127.0 (155.8) -> 126.0 (155.8) MB, 1.6 / 0.0 ms  allocation failure 
+
+
+<--- JS stacktrace --->
+
+==== JS stack trace =========================================
+
+Security context: 0x3719225a5891 <JSObject>
+    1: processIncomingData(aka processIncomingData) [/root/AppWeb/totalWanrranty.autofarmer/node_modules/mongodb/lib/cmap/message_stream.js:~103] [pc=0x16ab6ae702a8](this=0x256bb84822d1 <undefined>,stream=0x35a340540391 <Duplex map = 0x39497c7050c1>,callback=0x35a340540e01 <JSBoundFunction (BoundTargetFunction 0x2103a973aef1)>)
+    2: writeOrBuffer(aka writeOrBuffer) [_stream_writable.js:~348] [...
+
+insert xong tổng bảo hành
+UpdateTime:Wed Sep 16 2020 22:20:38 GMT+0700 (+07)
+Connect success
+
+<--- Last few GCs --->
+
+[6931:0x3fb7720]   985055 ms: Scavenge 161.6 (169.8) -> 160.8 (169.8) MB, 12.9 / 0.1 ms  allocation failure 
+[6931:0x3fb7720]  1021308 ms: Scavenge 161.7 (169.8) -> 160.9 (169.8) MB, 4.5 / 0.0 ms  allocation failure 
+[6931:0x3fb7720]  1048123 ms: Scavenge 161.8 (169.8) -> 161.0 (169.8) MB, 515.8 / 22.8 ms  allocation failure 
+[6931:0x3fb7720]  1073197 ms: Scavenge 161.9 (169.8) -> 161.1 (170.3) MB, 43.9 / 8.7 ms  allocation failure 
+
+
+<--- JS stacktrace --->
+
+==== JS stack trace =========================================
+
+Security context: 0x168db9d25891 <JSObject>
+    1: onwrite(aka onwrite) [_stream_writable.js:~431] [pc=0x12ca7674be8d](this=0x4be8e1022d1 <undefined>,stream=0x3903456cecc9 <Socket map = 0x4464ac0af49>,er=0x4be8e1022d1 <undefined>)
+    2: arguments adaptor frame: 1->2
+    3: /* anonymous */ [net.js:~715] [pc=0x12ca76757c1a](this=0x3903456cecc9 <Socket map = 0x4464ac0af49>,writev=0x4be8e1023e1 <false>,data=0x84c9c9ffe11 <Uint8Array map = 0x...
+
+
+<--- Last few GCs --->
+
+[6121:0x3721720] 65134294 ms: Scavenge 138.7 (170.3) -> 137.7 (170.3) MB, 2.2 / 0.0 ms  allocation failure 
+[6121:0x3721720] 65394601 ms: Scavenge 138.7 (170.3) -> 137.7 (170.3) MB, 2.1 / 0.0 ms  allocation failure 
+[6121:0x3721720] 65657573 ms: Scavenge 138.7 (170.3) -> 137.7 (170.3) MB, 5.1 / 0.0 ms  allocation failure 
+[6121:0x3721720] 65920570 ms: Scavenge 138.7 (170.3) -> 137.7 (170.3) MB, 1.7 / 0.0 ms  allocation failure 
+
+
+<--- JS stacktrace --->
+
+==== JS stack trace =========================================
+
+Security context: 0x1c57d3ba5891 <JSObject>
+    0: builtin exit frame: new Date(aka Date)(this=0x34d9f96022d1 <undefined>)
+
+    1: _onTimeout [/root/AppWeb/totalWanrranty.autofarmer/node_modules/node-cron/src/scheduled-task.js:~80] [pc=0x11215b06a1ce](this=0x9539ad7f599 <Timeout map = 0x3521eee0c759>)
+    2: ontimeout(aka ontimeout) [timers.js:498] [bytecode=0x2e40f9468ae9 offset=45](this=0x34d9f96022d1 <undefined>,timer=0x9539ad7f599 <Ti...
+
+
+<--- Last few GCs --->
+
+[4209:0x3655720] 87532680 ms: Scavenge 35.1 (69.3) -> 34.1 (69.3) MB, 1.2 / 0.0 ms  allocation failure 
+[4209:0x3655720] 87792792 ms: Scavenge 35.1 (69.3) -> 34.1 (69.3) MB, 1.4 / 0.0 ms  allocation failure 
+[4209:0x3655720] 88052298 ms: Scavenge 35.1 (69.3) -> 34.1 (69.3) MB, 1.2 / 0.0 ms  allocation failure 
+[4209:0x3655720] 88312359 ms: Scavenge 35.1 (69.3) -> 34.2 (69.3) MB, 1.2 / 0.0 ms  allocation failure 
+
+
+<--- JS stacktrace --->
+
+==== JS stack trace =========================================
+
+Security context: 0xdf188aa5891 <JSObject>
+    1: processIncomingData(aka processIncomingData) [/root/AppWeb/totalWanrranty.autofarmer/node_modules/mongodb/lib/cmap/message_stream.js:~103] [pc=0xf759ececb7f](this=0x224e92c822d1 <undefined>,stream=0x28082dea81a1 <Duplex map = 0x244149506b91>,callback=0x5d3294eb729 <JSBoundFunction (BoundTargetFunction 0xbf227cbaef1)>)
+    2: writeOrBuffer(aka writeOrBuffer) [_stream_writable.js:~348] [pc=0...
+
+
+<--- Last few GCs --->
+
+[2689:0x2c39720] 100741407 ms: Scavenge 37.7 (43.3) -> 36.7 (43.3) MB, 0.9 / 0.0 ms  allocation failure 
+[2689:0x2c39720] 101001476 ms: Scavenge 37.7 (43.3) -> 36.7 (43.3) MB, 0.9 / 0.0 ms  allocation failure 
+[2689:0x2c39720] 101259816 ms: Scavenge 37.7 (43.3) -> 36.7 (43.3) MB, 1.1 / 0.0 ms  allocation failure 
+[2689:0x2c39720] 101519179 ms: Scavenge 37.7 (43.3) -> 36.7 (43.3) MB, 1.0 / 0.0 ms  allocation failure 
+
+
+<--- JS stacktrace --->
+
+==== JS stack trace =========================================
+
+Security context: 0x28e28cea5891 <JSObject>
+    1: setTimeout(aka setTimeout) [timers.js:~448] [pc=0x14bdbfaada7e](this=0x1791b3b022d1 <undefined>,callback=0x2cb462af8299 <JSFunction ScheduledTask.task (sfi = 0x2cb462af7c19)>,after=738,arg1=0x1791b3b022d1 <undefined>,arg2=0x1791b3b022d1 <undefined>,arg3=0x1791b3b022d1 <undefined>)
+    2: arguments adaptor frame: 2->5
+    3: _onTimeout [/root/AppWeb/totalWanrranty.autofarmer/node_modules/n...
+

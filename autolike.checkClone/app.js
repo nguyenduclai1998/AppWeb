@@ -24,8 +24,8 @@ mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: t
 		console.log("connect error")
 	})
 
-cron.schedule('*/10 * * * *', async() => {
-	await pushDataServiceLogs();
+cron.schedule('*/1 * * * *', async() => {
+	//await pushDataServiceLogs();
 })
 
 cron.schedule('*/30 * * * * *', async() => {
@@ -84,9 +84,8 @@ const pushDataServiceLogs = async() => {
 const popDataServiceLogs = async() => {
 	for(var i = 1; i <= 500; i++) {
 		client.lpop("check_clone", async function(err, reply) {
-		
 		if(reply == null || typeof(reply) === "undefined") {
-			// console.log("Queue rong")
+			 console.log("Queue rong")
 		} else {
 			const uid = JSON.parse(reply)
 			const optionId = {
@@ -121,7 +120,7 @@ const popDataServiceLogs = async() => {
 					})
 					// console.log("Update Success")
 					// console.log(updateStatus)
-					// console.log("_id:"+uid)
+					console.log("_id:"+uid)
 					// console.log("id facebook:"+item.Id)
 				}
 			}
