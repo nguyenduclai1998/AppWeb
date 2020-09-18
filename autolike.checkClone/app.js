@@ -58,7 +58,7 @@ const pushDataServiceLogs = async() => {
 			    }
 			})
 			if(dataServiceLogs == 0) {
-				// console.log('Het data')
+				console.log('Het data')
 			} else {
 				for(const item of dataServiceLogs) {
 					await waitFor(50);
