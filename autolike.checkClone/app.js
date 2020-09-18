@@ -19,14 +19,14 @@ client.on('error', (err) => {
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async() => {
 		console.log("Connect success");
-		await pushDataServiceLogs();
+		// await pushDataServiceLogs();
 	}) 
 	.catch((error) => {
 		console.log("connect error")
 	})
 
 cron.schedule('*/5 * * * *', async() => {
-	// await pushDataServiceLogs();
+	await pushDataServiceLogs();
 })
 
 cron.schedule('*/30 * * * * *', async() => {
