@@ -58,7 +58,7 @@ const pushDataServiceLogs = async() => {
 			    }
 			})
 			if(dataServiceLogs == 0) {
-				console.log('Het data')
+				// console.log('Het data')
 			} else {
 				for(const item of dataServiceLogs) {
 					await waitFor(50);
@@ -86,7 +86,7 @@ const popDataServiceLogs = async() => {
 		client.lpop("check_clone", async function(err, reply) {
 		
 		if(reply == null || typeof(reply) === "undefined") {
-			console.log("Queue rong")
+			// console.log("Queue rong")
 		} else {
 			const uid = JSON.parse(reply)
 			const optionId = {
@@ -119,10 +119,10 @@ const popDataServiceLogs = async() => {
 					}, {
 						$set: updateStatus
 					})
-					console.log("Update Success")
-					console.log(updateStatus)
-					console.log("_id:"+uid)
-					console.log("id facebook:"+item.Id)
+					// console.log("Update Success")
+					// console.log(updateStatus)
+					// console.log("_id:"+uid)
+					// console.log("id facebook:"+item.Id)
 				}
 			}
 		}
