@@ -93,7 +93,8 @@ const dataServiceSuccess = async() => {
 	})
 	for(const serviceCode of serviceCodeSuccess) {
 		const listServiceLogs = await db.collection("service_logs").find({
-			service_code:serviceCode
+			service_code:serviceCode,
+			kind:1
 		}).toArray();
 		let mapServiceLog = {}
 		listServiceLogs.forEach(value => {
