@@ -19,13 +19,14 @@ client.on('error', (err) => {
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async() => {
 		console.log("Connect success");
+		await pushDataServiceLogs();
 	}) 
 	.catch((error) => {
 		console.log("connect error")
 	})
 
 cron.schedule('*/5 * * * *', async() => {
-	await pushDataServiceLogs();
+	// await pushDataServiceLogs();
 })
 
 cron.schedule('*/30 * * * * *', async() => {
@@ -42,21 +43,22 @@ var startDay = start.valueOf()
 var endDay = end.valueOf();
 
 const pushDataServiceLogs = async() => {
+	const dataServiceLogs = await db.collection("service_logs").distinct("uid",{
+	    closedTime: {
+	        $gte:startDay - 86400000,
+	        $lt: endDay - 86400000
+	    },
+	    checked: {
+	        $exists: false
+	    }
+	})
 	client.llen("check_clone", async function(err, reply) {
 		console.log("So phan tu trong queue: "+reply)
 		if(reply > 95000) {
 			console.log("Queue Service_logs da du");
 			console.log("So phan tu trong queue: "+reply)
 		} else {
-			const dataServiceLogs = await db.collection("service_logs").distinct("uid",{
-			    closedTime: {
-			        $gte:startDay - 86400000,
-			        $lt: endDay - 86400000
-			    },
-			    checked: {
-			        $exists: false
-			    }
-			})
+			console.log("So phan tu trong queue: "+reply)
 			if(dataServiceLogs == 0) {
 				console.log('Het data')
 			} else {
