@@ -25,7 +25,7 @@ mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: t
 		console.log("connect error" + error)
 	})
 cron.schedule('*/59 * * * *', async() => {
-	await wanrranty()
+	// await wanrranty()
 })
 
 var start = new Date();
@@ -43,7 +43,11 @@ const wanrranty = async() => {
 	        $gte: startDay - 691200000,
 	        $lt: endDay - 691200000
 	    },
-	    status: "Success"
+	    $or: [{
+	        status: "Success"
+	    }, {
+	        status: "pause"
+	    }],
 	})
 	for(const serviceCode of serviceSuccess) {
 		const totalWanrranty = await db.collection("service_logs").find({
