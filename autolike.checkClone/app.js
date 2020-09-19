@@ -50,6 +50,7 @@ const pushDataServiceLogs = async() => {
 			console.log("So phan tu trong queue: "+reply)
 		} else {
 			console.log("So phan tu trong queue: "+reply)
+			console.log(startDay - 86400000,endDay - 86400000)
 			const dataServiceLogs = await db.collection("service_logs").distinct("uid",{
 			    closedTime: {
 			        $gte:startDay - 86400000,
