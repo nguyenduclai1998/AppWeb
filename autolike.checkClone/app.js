@@ -49,6 +49,7 @@ const pushDataServiceLogs = async() => {
 			console.log("Queue Service_logs da du");
 			console.log("So phan tu trong queue: "+reply)
 		} else {
+			console.log("So phan tu trong queue: "+reply)
 			const dataServiceLogs = await db.collection("service_logs").distinct("uid",{
 			    closedTime: {
 			        $gte:startDay - 86400000,
@@ -87,7 +88,7 @@ const popDataServiceLogs = async() => {
 	for(var i = 1; i <= 100; i++) {
 		client.lpop("check_clone", async function(err, reply) {
 		if(reply == null || typeof(reply) === "undefined") {
-			 console.log("Queue rong")
+			 // console.log("Queue rong")
 		} else {
 			const uid = JSON.parse(reply)
 			const optionId = {
