@@ -89,7 +89,11 @@ const dataServiceSuccess = async() => {
 	        $gte:startDay,
 	        $lt:endDay
 	    },
-	    status: "Success"
+	    $or: [{
+	        status: "Success"
+	    }, {
+	        status: "pause"
+	    }],
 	})
 	for(const serviceCode of serviceCodeSuccess) {
 		const listServiceLogs = await db.collection("service_logs").find({
