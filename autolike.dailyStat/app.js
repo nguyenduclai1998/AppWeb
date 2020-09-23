@@ -40,10 +40,14 @@ var endDay = end.valueOf();
 const pushDataService = async() => {
 	const serviceSuccess = await db.collection("services").distinct("service_code",{
 		TimeSuccess: {
-	        $gte: 1599584400000,
-	        $lt: 1599670799999
+	        $gte: 1600016400000,
+	        $lt: 1600102799999
 	    },
-        status: "Success"
+	    $or: [{
+	        status: "Success"
+	    }, {
+	        status: "pause"
+	    }],
 	})
 	for(const serviceCode of serviceSuccess){
 		const listServiceLogs = await db.collection("service_logs").find({
@@ -88,10 +92,10 @@ function insertDailyStat(listServiceCodeToken, startDay) {
        		}
 
        		let paramInsert = {
-       			finishTime: 1599670799999,
-				finishTimeISO:new Date(1599670799999).toLocaleDateString(),
-				closedTime: 1600189200000,
-				closedTimeISO: new Date(1600189200000).toLocaleDateString(),
+       			finishTime: 1600016400000,
+				finishTimeISO:new Date(1600016400000).toLocaleDateString(),
+				closedTime: 1600621200000,
+				closedTimeISO: new Date(1600621200000).toLocaleDateString(),
        			price: value.price,
        			status: "Closed",
 				total: value.totalLog,
