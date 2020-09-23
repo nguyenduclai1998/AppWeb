@@ -97,7 +97,7 @@ function insertDailyStat(listServiceCodeToken, startDay) {
 				closedTime: 1600880400000,
 				closedTimeISO: new Date(1600880400000).toLocaleDateString(),
        			price: value.price,
-       			status: "Closed",
+       			status: "Success",
 				total: value.totalLog,
 				amount: value.totalPrice,
 				updated_at:new Date().valueOf()
