@@ -71,9 +71,9 @@ const dataServiceSuccess = async() => {
 		let uniqueServiceLog = Object.values(uniqueServiceLogs)
 
 		dataServiceLog(uniqueServiceLog).then(data => {
-			insertDailyStat(data).then(value => {
+			// insertDailyStat(data).then(value => {
 
-			})
+			// })
 		})
 	}
 	console.log('insert xong doanh thu ước tính')
@@ -100,7 +100,10 @@ function dataServiceLog(uniqueServiceLog) {
 			}
 			mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = mapServiceLog[ value.service_code + "-" + value.token ]['price'] * mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']
 		})
-		resolve(Object.values(mapServiceLog));
+		insertDailyStat(Object.values(mapServiceLog)).then(data => {
+			resolve(data)
+		})
+		// resolve(Object.values(mapServiceLog));
 	})
 }
 
