@@ -19,7 +19,7 @@ client.on('error', (err) => {
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async () => {
 		console.log("Connect success")
-		await dataServiceSuccess()
+		await test()
 	}) 
 	.catch((error) => {
 		console.log("connect error"+error)
@@ -228,7 +228,16 @@ function insertDailyStat(listServiceCodeToken) {
     });
 }
 
-
+const test = async() => {
+	const data = await db.collection("daily_clone_test").find({
+		token:"RJI2G441ODEWOJFEPI8E4G"
+	}).toArray()
+	let tien = 0
+	for(const item of data) {
+		tien = tien + item.amount
+	}
+	console.log(tien)
+}
 // function insertDailyStat(listServiceCodeToken, startDay) {
 // 	 return new Promise((resolve, reject) => {
 //        	let results = [];
