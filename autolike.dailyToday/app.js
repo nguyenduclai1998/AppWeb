@@ -215,7 +215,7 @@ function insertDailyStat(listServiceCodeToken) {
 				updated_at:new Date().valueOf()
        		}
 
-            Promise.resolve( db.collection("daily_stat").findOneAndUpdate(paramUpdate, {$set: paramInsert},{ upsert: true}) )
+            Promise.resolve( db.collection("daily_clone_test").findOneAndUpdate(paramUpdate, {$set: paramInsert},{ upsert: true}) )
             .then(result => {
                 results[index] = result;
                 completed += 1;
