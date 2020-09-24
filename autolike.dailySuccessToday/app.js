@@ -131,7 +131,7 @@ function insertDailyStat(listServiceCodeToken) {
 				updated_at:new Date().valueOf()
        		}
 
-            Promise.resolve( db.collection("daily_stat").findOneAndUpdate(paramUpdate, {$set: paramInsert},{ upsert: true}) )
+            Promise.resolve( db.collection("daily_clone_test").findOneAndUpdate(paramUpdate, {$set: paramInsert},{ upsert: true}) )
             .then(result => {
                 results[index] = result;
                 completed += 1;
@@ -145,7 +145,7 @@ function insertDailyStat(listServiceCodeToken) {
 }
 
 const test = async() => {
-	const data = await db.collection("daily_stat").find({
+	const data = await db.collection("daily_clone_test").find({
 		token:"RJI2G441ODEWOJFEPI8E4G"
 	}).toArray()
 	let tien = 0
