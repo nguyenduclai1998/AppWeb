@@ -19,23 +19,31 @@ client.on('error', (err) => {
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async () => {
 		console.log("Connect success")
-		await pushDataServiceLog()
+		await dataServiceSuccess()
 	}) 
 	.catch((error) => {
 		console.log("connect error"+error)
 	})
 
 cron.schedule('*/19 * * * *', async() => {
-	await pushDataServiceLog()
+	// await pushDataServiceLog()
 	
 })
 
 cron.schedule('*/19 * * * *', async() => {
-	await dataServiceSuccess()
+	// await dataServiceSuccess()
 	
 })
 
 const waitFor = (ms) => new Promise(r => setTimeout(r, ms))
+
+var start = new Date();
+start.setHours(0,0,0,0);
+var startDay = start.valueOf()
+//Tinh thoi gian ket thuc trong ngay
+var end = new Date();
+end.setHours(23,59,59,999);
+var endDay = end.valueOf()
 
 const pushDataServiceLog = async() => {
 	//Tinh thoi gian bat dau trong ngay
@@ -87,18 +95,10 @@ const pushDataServiceLog = async() => {
 }
 
 const dataServiceSuccess = async() => {
-	//Tinh thoi gian bat dau trong ngay
-	var start = new Date();
-	start.setHours(0,0,0,0);
-	var startDay = start.valueOf()
-	//Tinh thoi gian ket thuc trong ngay
-	var end = new Date();
-	end.setHours(23,59,59,999);
-	var endDay = end.valueOf()
-	const serviceCodeSuccess = await db.collection("services").distinct("service_code", {
+	const serviceSuccess = await db.collection("services").distinct("service_code",{
 		TimeSuccess: {
-	        $gte:startDay,
-	        $lt:endDay
+	        $gte: startDay,
+	        $lt: endDay
 	    },
 	    $or: [{
 	        status: "Success"
@@ -106,35 +106,29 @@ const dataServiceSuccess = async() => {
 	        status: "pause"
 	    }],
 	})
-	for(const serviceCode of serviceCodeSuccess) {
+	for(const serviceCode of serviceSuccess){
 		const listServiceLogs = await db.collection("service_logs").find({
-			service_code:serviceCode,
-			kind:1
-		}).toArray();
-		let mapServiceLog = {}
-		listServiceLogs.forEach(value => {
-			if(!mapServiceLog[ value.service_code + "-" + value.token ] ) {
-				mapServiceLog[ value.service_code + "-" + value.token ] = {}
-				mapServiceLog[ value.service_code + "-" + value.token ]['totalLog'] = 1
-				mapServiceLog[ value.service_code + "-" + value.token ]['price'] = value.price
-				mapServiceLog[ value.service_code + "-" + value.token ]['data'] = []
-				mapServiceLog[ value.service_code + "-" + value.token ]['data'].push(value)
-				mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = 0
-				mapServiceLog[ value.service_code + "-" + value.token ]['token'] = value.token
-				mapServiceLog[ value.service_code + "-" + value.token ]['service_code'] = value.service_code
-				mapServiceLog[ value.service_code + "-" + value.token ]['type'] = value.type
-				mapServiceLog[ value.service_code + "-" + value.token ]['finishTime'] = startDay
-				mapServiceLog[ value.service_code + "-" + value.token ]['finishTimeISO'] = new Date(startDay).toISOString()
-				mapServiceLog[ value.service_code + "-" + value.token ]['closedTime'] = parseInt(startDay) + parseInt(604800000)
-				mapServiceLog[ value.service_code + "-" + value.token ]['closedTimeISO'] = new Date(parseInt(startDay) + parseInt(604800000)).toISOString()
-			} else {
-				mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']++
+			service_code: serviceCode,
+			kind: 1
+		}).toArray()
+		
+		let uniqueServiceLogs = {}
+		listServiceLogs.forEach(elments => {
+			if(!uniqueServiceLogs [elments.service_code + "-" + elments.uid]) {
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid] = {}
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["price"]= elments.price
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["token"]= elments.token
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["service_code"]= elments.service_code
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["uid"]= elments.uid
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["type"]= elments.type
 			}
-			mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = mapServiceLog[ value.service_code + "-" + value.token ]['totalLog'] * mapServiceLog[ value.service_code + "-" + value.token ]['price']
-		});
+		})
+		let uniqueServiceLog = Object.values(uniqueServiceLogs)
 
-		insertDailyStat( Object.values(mapServiceLog),startDay).then(data => {  
-			
+		dataServiceLog(uniqueServiceLog).then(data => {
+			insertDailyStat(data).then(value => {
+
+			})
 		})
 	}
 	console.log('insert xong doanh thu ước tính')
@@ -173,7 +167,31 @@ function insertDailyToday(listServiceCodeToken, startDay) {
     });
 }
 
-function insertDailyStat(listServiceCodeToken, startDay) {
+function dataServiceLog(uniqueServiceLog) {
+	return new Promise((resolve, reject) => {
+		let results = [];
+		let completed = 0;
+		let mapServiceLog = {}
+
+		uniqueServiceLog.forEach((value, index) => {
+			if( !mapServiceLog[ value.service_code + "-" + value.token ] ) {
+				mapServiceLog[ value.service_code + "-" + value.token ] = {}
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['totalLog'] = 1		
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['price'] = value.price
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = 0
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['token'] = value.token
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['service_code'] = value.service_code
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['type'] = value.type
+			} else {
+				mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']++
+			}
+			mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = mapServiceLog[ value.service_code + "-" + value.token ]['price'] * mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']
+		})
+		resolve(Object.values(mapServiceLog));
+	})
+}
+
+function insertDailyStat(listServiceCodeToken) {
 	 return new Promise((resolve, reject) => {
        	let results = [];
        	let completed = 0;
@@ -182,16 +200,16 @@ function insertDailyStat(listServiceCodeToken, startDay) {
        		let paramUpdate = {
        			token: value.token,
 				type: value.type,
-				price: value.price,
 				service_code:value.service_code,
-				finishTime: value.finishTime,
-				finishTimeISO:value.finishTimeISO,
-				closedTime: value.closedTime,
-				closedTimeISO: value.closedTimeISO,
-				status: "Success"
        		}
 
        		let paramInsert = {
+       			finishTime: startDay,
+				finishTimeISO:new Date(startDay).toLocaleDateString(),
+				closedTime: startDay + 604800000,
+				closedTimeISO: new Date(startDay + 604800000).toLocaleDateString(),
+       			price: value.price,
+       			status: "Success",
 				total: value.totalLog,
 				amount: value.totalPrice,
 				updated_at:new Date().valueOf()
@@ -209,5 +227,43 @@ function insertDailyStat(listServiceCodeToken, startDay) {
        });
     });
 }
+
+
+// function insertDailyStat(listServiceCodeToken, startDay) {
+// 	 return new Promise((resolve, reject) => {
+//        	let results = [];
+//        	let completed = 0;
+       
+//        	listServiceCodeToken.forEach((value, index) => {
+//        		let paramUpdate = {
+//        			token: value.token,
+// 				type: value.type,
+// 				price: value.price,
+// 				service_code:value.service_code,
+// 				finishTime: value.finishTime,
+// 				finishTimeISO:value.finishTimeISO,
+// 				closedTime: value.closedTime,
+// 				closedTimeISO: value.closedTimeISO,
+// 				status: "Success"
+//        		}
+
+//        		let paramInsert = {
+// 				total: value.totalLog,
+// 				amount: value.totalPrice,
+// 				updated_at:new Date().valueOf()
+//        		}
+
+//             Promise.resolve( db.collection("daily_stat").findOneAndUpdate(paramUpdate, {$set: paramInsert},{ upsert: true}) )
+//             .then(result => {
+//                 results[index] = result;
+//                 completed += 1;
+                
+//                 if (completed == listServiceCodeToken.length) {
+//                     resolve(results);
+//                 }
+//             }).catch(err => reject(err));
+//        });
+//     });
+// }
 
 
