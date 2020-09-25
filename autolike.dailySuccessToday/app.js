@@ -131,16 +131,3 @@ function insertDailyStat(listServiceCodeToken) {
 }
 
 
-const test = async() => {
-	const data = await db.collection("daily_clone_test").find({
-		token:"RJI2G441ODEWOJFEPI8E4G"
-	}).toArray()
-	let tien = 0
-	for(const item of data) {
-		tien = tien + item.amount
-	}
-	console.log(tien)
-}
-
-
-
