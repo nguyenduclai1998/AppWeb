@@ -93,7 +93,7 @@ const pushDataService = async() => {
 	console.log('updateTime: ' + new Date())
 }
 
-function insertDailyStat(listServiceCodeToken, startDay) {
+function insertDailyStat(listServiceCodeToken) {
 	 return new Promise((resolve, reject) => {
        	let results = [];
        	let completed = 0;
