@@ -54,9 +54,23 @@ const pushDataService = async() => {
 			service_code: serviceCode,
 			kind: 1
 		}).toArray()
-		const uniqueServiceLogs = [...new Set(listServiceLogs)]
+
+		//Xoá bỏ những bản ghi trùng nhau trong service log
+		let uniqueServiceLogs = {}
+		listServiceLogs.forEach(elments => {
+			if(!uniqueServiceLogs [elments.service_code + "-" + elments.uid]) {
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid] = {}
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["price"]= elments.price
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["token"]= elments.token
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["service_code"]= elments.service_code
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["uid"]= elments.uid
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["type"]= elments.type
+			}
+		})
+		let uniqueServiceLog = Object.values(uniqueServiceLogs)
+
 		let mapServiceLog = {}
-		uniqueServiceLogs.forEach( value => {
+		uniqueServiceLog.forEach( value => {
 			if( !mapServiceLog[ value.service_code + "-" + value.token ] ) {
 				mapServiceLog[ value.service_code + "-" + value.token ] = {}
 			 	mapServiceLog[ value.service_code + "-" + value.token ]['totalLog'] = 1		

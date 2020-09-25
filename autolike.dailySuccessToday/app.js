@@ -18,28 +18,26 @@ client.on('error', (err) => {
 
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async () => {
-		console.log("Connect success")
-		await dataServiceSuccess()
+		console.log("Connect success");
+		await pushDataService()
 	}) 
 	.catch((error) => {
 		console.log("connect error"+error)
 	})
-
 cron.schedule('*/59 * * * *', async() => {
-	await dataServiceSuccess()
-	
+	await pushDataService()
 })
-const waitFor = (ms) => new Promise(r => setTimeout(r, ms))
 
 var start = new Date();
 start.setHours(0,0,0,0);
-var startDay = start.valueOf()
-//Tinh thoi gian ket thuc trong ngay
+
 var end = new Date();
 end.setHours(23,59,59,999);
-var endDay = end.valueOf()
 
-const dataServiceSuccess = async() => {
+var startDay = start.valueOf()
+var endDay = end.valueOf();
+
+const pushDataService = async() => {
 	const serviceSuccess = await db.collection("services").distinct("service_code",{
 		TimeSuccess: {
 	        $gte: startDay,
@@ -56,7 +54,8 @@ const dataServiceSuccess = async() => {
 			service_code: serviceCode,
 			kind: 1
 		}).toArray()
-		
+
+		//Xoá bỏ những bản ghi trùng nhau trong service log
 		let uniqueServiceLogs = {}
 		listServiceLogs.forEach(elments => {
 			if(!uniqueServiceLogs [elments.service_code + "-" + elments.uid]) {
@@ -70,27 +69,14 @@ const dataServiceSuccess = async() => {
 		})
 		let uniqueServiceLog = Object.values(uniqueServiceLogs)
 
-		dataServiceLog(uniqueServiceLog).then(data => {
-			// insertDailyStat(data).then(value => {
-
-			// })
-		})
-	}
-	console.log('insert xong doanh thu ước tính')
-	console.log('UpdateTime:' + new Date())
-}
-
-function dataServiceLog(uniqueServiceLog) {
-	return new Promise((resolve, reject) => {
-		let results = [];
-		let completed = 0;
 		let mapServiceLog = {}
-
-		uniqueServiceLog.forEach((value, index) => {
+		uniqueServiceLog.forEach( value => {
 			if( !mapServiceLog[ value.service_code + "-" + value.token ] ) {
 				mapServiceLog[ value.service_code + "-" + value.token ] = {}
 			 	mapServiceLog[ value.service_code + "-" + value.token ]['totalLog'] = 1		
 			 	mapServiceLog[ value.service_code + "-" + value.token ]['price'] = value.price
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['data'] = []
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['data'].push(value)
 			 	mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = 0
 			 	mapServiceLog[ value.service_code + "-" + value.token ]['token'] = value.token
 			 	mapServiceLog[ value.service_code + "-" + value.token ]['service_code'] = value.service_code
@@ -99,15 +85,15 @@ function dataServiceLog(uniqueServiceLog) {
 				mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']++
 			}
 			mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = mapServiceLog[ value.service_code + "-" + value.token ]['price'] * mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']
+		});
+		insertDailyStat( Object.values(mapServiceLog)).then(data => {  
+			console.log('xong 1 serviceCode: ' +serviceCode )
 		})
-		insertDailyStat(Object.values(mapServiceLog)).then(data => {
-			resolve(data)
-		})
-		// resolve(Object.values(mapServiceLog));
-	})
+	}
+	console.log('updateTime: ' + new Date())
 }
 
-function insertDailyStat(listServiceCodeToken) {
+function insertDailyStat(listServiceCodeToken, startDay) {
 	 return new Promise((resolve, reject) => {
        	let results = [];
        	let completed = 0;
@@ -131,7 +117,7 @@ function insertDailyStat(listServiceCodeToken) {
 				updated_at:new Date().valueOf()
        		}
 
-            Promise.resolve( db.collection("daily_clone_test").findOneAndUpdate(paramUpdate, {$set: paramInsert},{ upsert: true}) )
+            Promise.resolve( db.collection("daily_stat").findOneAndUpdate(paramUpdate, {$set: paramInsert},{ upsert: true}) )
             .then(result => {
                 results[index] = result;
                 completed += 1;
@@ -143,6 +129,7 @@ function insertDailyStat(listServiceCodeToken) {
        });
     });
 }
+
 
 const test = async() => {
 	const data = await db.collection("daily_clone_test").find({
