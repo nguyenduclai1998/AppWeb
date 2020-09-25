@@ -55,6 +55,11 @@ const pushDataServiceLog = async() => {
 	        $gte: startDay,
 	        $lt: endDay
 	    },
+	    $or: [{
+            type: "follow"
+        }, {
+            type: "likepage"
+        }],
 	})
 	for(const token of listTokens ) {
 		const listServiceLogs = await db.collection("service_logs").find({

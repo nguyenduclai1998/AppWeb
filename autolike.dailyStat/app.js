@@ -24,8 +24,8 @@ mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: t
 	.catch((error) => {
 		console.log("connect error"+error)
 	})
-cron.schedule('*/120 * * * *', async() => {
-	// await pushDataService()
+cron.schedule('*/360 * * * *', async() => {
+	await pushDataService()
 })
 
 var start = new Date();
@@ -36,12 +36,12 @@ end.setHours(23,59,59,999);
 
 var startDay = start.valueOf()
 var endDay = end.valueOf();
-//chay ngay 22
+
 const pushDataService = async() => {
 	const serviceSuccess = await db.collection("services").distinct("service_code",{
 		TimeSuccess: {
-	        $gte: 1600275600000,
-	        $lt: 1600361999999
+	        $gte: startDay - 691200000,
+	        $lt: endDay - 691200000
 	    },
 	    $or: [{
 	        status: "Success"
@@ -106,10 +106,10 @@ function insertDailyStat(listServiceCodeToken, startDay) {
        		}
 
        		let paramInsert = {
-       			finishTime: 1600275600000,
-				finishTimeISO:new Date(1600275600000).toLocaleDateString(),
-				closedTime: 1600880400000,
-				closedTimeISO: new Date(1600880400000).toLocaleDateString(),
+       			finishTime: startDay - 691200000,
+				finishTimeISO:new Date(startDay - 691200000).toLocaleDateString(),
+				closedTime: startDay - 86400000,
+				closedTimeISO: new Date(startDay - 86400000).toLocaleDateString(),
        			price: value.price,
        			status: "Closed",
 				total: value.totalLog,
