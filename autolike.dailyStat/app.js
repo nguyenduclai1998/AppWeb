@@ -38,7 +38,7 @@ var startDay = start.valueOf()
 var endDay = end.valueOf();
 
 const pushDataService = async() => {
-	const serviceSuccess = await db.collection("services").distinct("service_code",{
+	const listServiceLogs = await db.collection("services").find({
 		TimeSuccess: {
 	        $gte: startDay - 691200000,
 	        $lt: endDay - 691200000
@@ -48,48 +48,42 @@ const pushDataService = async() => {
 	    }, {
 	        status: "pause"
 	    }],
+	    kind: 1
+	}).toArray()
+	//Xoá bỏ những bản ghi trùng nhau trong service log
+	let uniqueServiceLogs = {}
+	listServiceLogs.forEach(elments => {
+		if(!uniqueServiceLogs [elments.service_code + "-" + elments.uid]) {
+			uniqueServiceLogs [elments.service_code + "-" + elments.uid] = {}
+			uniqueServiceLogs [elments.service_code + "-" + elments.uid]["price"]= elments.price
+			uniqueServiceLogs [elments.service_code + "-" + elments.uid]["token"]= elments.token
+			uniqueServiceLogs [elments.service_code + "-" + elments.uid]["service_code"]= elments.service_code
+			uniqueServiceLogs [elments.service_code + "-" + elments.uid]["uid"]= elments.uid
+			uniqueServiceLogs [elments.service_code + "-" + elments.uid]["type"]= elments.type
+		}
 	})
-	for(const serviceCode of serviceSuccess){
-		const listServiceLogs = await db.collection("service_logs").find({
-			service_code: serviceCode,
-			kind: 1
-		}).toArray()
+	let uniqueServiceLog = Object.values(uniqueServiceLogs)
 
-		//Xoá bỏ những bản ghi trùng nhau trong service log
-		let uniqueServiceLogs = {}
-		listServiceLogs.forEach(elments => {
-			if(!uniqueServiceLogs [elments.service_code + "-" + elments.uid]) {
-				uniqueServiceLogs [elments.service_code + "-" + elments.uid] = {}
-				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["price"]= elments.price
-				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["token"]= elments.token
-				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["service_code"]= elments.service_code
-				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["uid"]= elments.uid
-				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["type"]= elments.type
-			}
-		})
-		let uniqueServiceLog = Object.values(uniqueServiceLogs)
-
-		let mapServiceLog = {}
-		uniqueServiceLog.forEach( value => {
-			if( !mapServiceLog[ value.service_code + "-" + value.token ] ) {
-				mapServiceLog[ value.service_code + "-" + value.token ] = {}
-			 	mapServiceLog[ value.service_code + "-" + value.token ]['totalLog'] = 1		
-			 	mapServiceLog[ value.service_code + "-" + value.token ]['price'] = value.price
-			 	mapServiceLog[ value.service_code + "-" + value.token ]['data'] = []
-			 	mapServiceLog[ value.service_code + "-" + value.token ]['data'].push(value)
-			 	mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = 0
-			 	mapServiceLog[ value.service_code + "-" + value.token ]['token'] = value.token
-			 	mapServiceLog[ value.service_code + "-" + value.token ]['service_code'] = value.service_code
-			 	mapServiceLog[ value.service_code + "-" + value.token ]['type'] = value.type
-			} else {
-				mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']++
-			}
-			mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = mapServiceLog[ value.service_code + "-" + value.token ]['price'] * mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']
-		});
-		insertDailyStat( Object.values(mapServiceLog)).then(data => {  
-			console.log('xong 1 serviceCode: ' +serviceCode )
-		})
-	}
+	let mapServiceLog = {}
+	uniqueServiceLog.forEach( value => {
+		if( !mapServiceLog[ value.service_code + "-" + value.token ] ) {
+			mapServiceLog[ value.service_code + "-" + value.token ] = {}
+		 	mapServiceLog[ value.service_code + "-" + value.token ]['totalLog'] = 1		
+		 	mapServiceLog[ value.service_code + "-" + value.token ]['price'] = value.price
+		 	mapServiceLog[ value.service_code + "-" + value.token ]['data'] = []
+		 	mapServiceLog[ value.service_code + "-" + value.token ]['data'].push(value)
+		 	mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = 0
+		 	mapServiceLog[ value.service_code + "-" + value.token ]['token'] = value.token
+		 	mapServiceLog[ value.service_code + "-" + value.token ]['service_code'] = value.service_code
+		 	mapServiceLog[ value.service_code + "-" + value.token ]['type'] = value.type
+		} else {
+			mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']++
+		}
+		mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = mapServiceLog[ value.service_code + "-" + value.token ]['price'] * mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']
+	});
+	insertDailyStat( Object.values(mapServiceLog)).then(data => {  
+		console.log('xong 1 serviceCode: ' +serviceCode )
+	})
 	console.log('updateTime: ' + new Date())
 }
 
