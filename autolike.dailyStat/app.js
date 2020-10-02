@@ -38,7 +38,7 @@ var startDay = start.valueOf()
 var endDay = end.valueOf();
 
 const pushDataService = async() => {
-	const listServiceLogs = await db.collection("services").find({
+	const listServiceCodes = await db.collection("services").distinct("service_code",{
 		TimeSuccess: {
 	        $gte: startDay - 691200000,
 	        $lt: endDay - 691200000
@@ -48,8 +48,7 @@ const pushDataService = async() => {
 	    }, {
 	        status: "pause"
 	    }],
-	    kind: 1
-	}).toArray()
+	})
 	//Xoá bỏ những bản ghi trùng nhau trong service log
 	let uniqueServiceLogs = {}
 	listServiceLogs.forEach(elments => {
@@ -82,9 +81,8 @@ const pushDataService = async() => {
 		mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = mapServiceLog[ value.service_code + "-" + value.token ]['price'] * mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']
 	});
 	insertDailyStat( Object.values(mapServiceLog)).then(data => {  
-		console.log('xong 1 serviceCode: ' +serviceCode )
+		console.log('updateTime: ' + new Date())
 	})
-	console.log('updateTime: ' + new Date())
 }
 
 function insertDailyStat(listServiceCodeToken) {
