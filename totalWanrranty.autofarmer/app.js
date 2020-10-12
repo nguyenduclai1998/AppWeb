@@ -19,13 +19,13 @@ client.on('error', (err) => {
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async() => {
 		console.log("Connect success");
-		// await wanrranty()
+		await wanrranty()
 	}) 
 	.catch((error) => {
 		console.log("connect error" + error)
 	})
 cron.schedule('*/59 * * * *', async() => {
-	await wanrranty()
+	// await wanrranty()
 })
 
 var start = new Date();
@@ -40,8 +40,8 @@ var endDay = end.valueOf();
 const wanrranty = async() => {
 	const serviceSuccess = await db.collection("services").distinct("service_code",{
 		TimeSuccess: {
-	        $gte: startDay - 691200000,
-	        $lt: endDay - 691200000
+	        $gte: startDay - 1296000000,
+	        $lt: endDay - 1296000000
 	    },
 	    $or: [{
 	        status: "Success"
