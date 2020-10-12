@@ -1,5 +1,5 @@
 import express from 'express';
-// import 'regenerator-runtime/runtime';
+import 'regenerator-runtime/runtime';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import logger from 'morgan';
