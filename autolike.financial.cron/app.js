@@ -81,7 +81,7 @@ const pushDataService = async() => {
 			// 	}
 			// )	
 			console.log(amounts)
-			console.log(amount)
+			console.log(amount1)
 			console.log(warrantyCost)
 		}
 	// }
