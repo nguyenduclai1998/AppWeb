@@ -62,7 +62,7 @@ const pushDataService = async() => {
 					totalWanrranty = totalWanrranty
 				} else {
 					amounts = parseInt(amounts) + (parseInt(amount.amount) - parseInt(amount.warrantyCosts))
-					warrantyCost = parseInt(warrantyCost)+ parseInt(amount.warrantyCost)
+					warrantyCost = parseInt(warrantyCost)+ parseInt(amount.warrantyCosts)
 					totalWanrranty = parseInt(totalWanrranty)+ parseInt(amount.totalWanrranty)
 				}
 
