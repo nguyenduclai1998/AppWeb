@@ -85,11 +85,11 @@ const pushDataService = async() => {
 			// 		upsert: true
 			// 	}
 			// )	
-			console.log(amounts)
-			console.log(amount1)
-			console.log(warrantyCost)
-			console.log(total)
-			console.log(totalWanrranty)
+			console.log("tien truoc khi tru bao hanh" + amount1)
+			console.log("tien sau khi tru bao hanh" + amounts)
+			console.log("tong tien bao hanh" + warrantyCost)
+			console.log("Tong so likepage + follow" + total)
+			console.log("Tong so likepage + follow bi checkpoint" + totalWanrranty)
 		}
 	// }
 	
