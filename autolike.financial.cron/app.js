@@ -78,6 +78,6 @@ const pushDataService = async() => {
 	}
 	
 	console.log("startDay: " + (startDay - 345600000), "endDay: " + (endDay - 345600000))
-	console.log('endTime: ' + new Date());
+	console.log('endTime: ' + new Date(startDay - 345600000));
 	console.log("------------------Kết thúc một chu kì------------------")
 }
