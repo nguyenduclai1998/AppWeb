@@ -1,20 +1,11 @@
 import express from 'express';
-import 'regenerator-runtime/runtime';
+// import 'regenerator-runtime/runtime';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import logger from 'morgan';
-import asyncRedis from "async-redis";
 import cron from 'node-cron';
-import redis from 'redis'
 import request from 'request-promise'
 const db = mongoose.connection
-const client = 	redis.createClient({
-	host: '127.0.0.1',
-	port: 6379
-});
-client.on('error', (err) => {
-	console.log("Error" + err)
-})
 
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async() => {
@@ -40,8 +31,8 @@ var endDay = end.valueOf();
 const wanrranty = async() => {
 	const serviceSuccess = await db.collection("services").distinct("service_code",{
 		TimeSuccess: {
-	        $gte: startDay - 1209600000,
-	        $lt: endDay - 1209600000
+	        $gte: startDay - 1123200000,
+	        $lt: endDay - 1123200000
 	    },
 	    $or: [{
 	        status: "Success"
