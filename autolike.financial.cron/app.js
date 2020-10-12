@@ -53,16 +53,17 @@ const pushDataService = async() => {
 			let amounts = 0
 			let amount1 = 0
 			let warrantyCost = 0
+			let total = 0
 			for(const amount of dataDaily) {
 				if(!amount.warrantyCosts) {
 					amounts = parseInt(amounts)+ parseInt(amount.amount)
 				} else {
 					amounts = parseInt(amounts) + (parseInt(amount.amount) - parseInt(amount.warrantyCosts))
+					warrantyCost = parseInt(warrantyCost)+ parseInt(amount.warrantyCost)
 				}
 
 				amount1 = parseInt(amount1)+ parseInt(amount.amount)
-				warrantyCost = parseInt(warrantyCost)+ parseInt(amount.warrantyCost)
-
+				total = parseInt(total)+ parseInt(amount.total)
 			}
 
 			// await db.collection("financial").findOneAndUpdate({
@@ -83,6 +84,7 @@ const pushDataService = async() => {
 			console.log(amounts)
 			console.log(amount1)
 			console.log(warrantyCost)
+			console.log(total)
 		}
 	// }
 	
