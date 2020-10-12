@@ -33,8 +33,8 @@ const pushDataService = async() => {
 	console.log('timeStart: ' + new Date());
 	const tokenDaily = await db.collection("daily_stat").distinct("token", {
 		closedTime:{
-			$gte:startDay - 432000000,
-			$lt: endDay - 432000000
+			$gte:startDay - 345600000,
+			$lt: endDay - 345600000
 		}
 	})
 	for(const token of tokenDaily) {
@@ -42,8 +42,8 @@ const pushDataService = async() => {
 			token:token,
 			status: "Closed",
 			closedTime:{
-				$gte:startDay - 432000000,
-				$lt: endDay - 432000000
+				$gte:startDay - 345600000,
+				$lt: endDay - 345600000
 			}
 		}).toArray()
 		
@@ -61,10 +61,10 @@ const pushDataService = async() => {
 
 			await db.collection("financial").findOneAndUpdate({
 				token:token,
-				closedTime: startDay - 432000000,
+				closedTime: startDay - 345600000,
 			}, {
 				$set: {
-					closedTimeISO:new Date(startDay - 432000000).toLocaleDateString(),
+					closedTimeISO:new Date(startDay - 345600000).toLocaleDateString(),
 					update_at:new Date().getTime(),
 					amount: amounts,
 					status:"Chưa thanh toán",
@@ -77,7 +77,7 @@ const pushDataService = async() => {
 		}
 	}
 	
-	console.log("startDay: " + (startDay - 432000000), "endDay: " + (endDay - 432000000))
+	console.log("startDay: " + (startDay - 345600000), "endDay: " + (endDay - 345600000))
 	console.log('endTime: ' + new Date());
 	console.log("------------------Kết thúc một chu kì------------------")
 }
