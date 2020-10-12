@@ -5,27 +5,19 @@ import mongoose from 'mongoose';
 import logger from 'morgan';
 import asyncRedis from "async-redis";
 import cron from 'node-cron';
-import redis from 'redis'
 import request from 'request-promise'
 const db = mongoose.connection
-const client = 	redis.createClient({
-	host: '127.0.0.1',
-	port: 6379
-});
-client.on('error', (err) => {
-	console.log("Error" + err)
-})
 
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async () => {
 		console.log("Connect success");
-		await pushDataService()
+		await dailyStat()
 	}) 
 	.catch((error) => {
 		console.log("connect error"+error)
 	})
-cron.schedule('*/360 * * * *', async() => {
-	await pushDataService()
+cron.schedule('*/120 * * * *', async() => {
+	// await dailyStat()
 })
 
 var start = new Date();
@@ -37,87 +29,91 @@ end.setHours(23,59,59,999);
 var startDay = start.valueOf()
 var endDay = end.valueOf();
 
-const pushDataService = async() => {
+const dailyStat = async() => {
+	console.log("------------------Bắt đầu một chu kì------------------")
+	console.log('timeStart: ' + new Date());
 	const listServiceCodes = await db.collection("services").distinct("service_code",{
 		TimeSuccess: {
-	        $gte: startDay - 691200000,
-	        $lt: endDay - 691200000
+	        $gte: startDay - 864000000,
+	        $lt: endDay - 864000000
 	    },
-	    $or: [{
-	        status: "Success"
-	    }, {
-	        status: "pause"
-	    }],
+        $or:[{
+            status: "Success"
+        }, {
+            status: "pause"
+        }]
 	})
-	//Xoá bỏ những bản ghi trùng nhau trong service log
-	let uniqueServiceLogs = {}
-	listServiceLogs.forEach(elments => {
-		if(!uniqueServiceLogs [elments.service_code + "-" + elments.uid]) {
-			uniqueServiceLogs [elments.service_code + "-" + elments.uid] = {}
-			uniqueServiceLogs [elments.service_code + "-" + elments.uid]["price"]= elments.price
-			uniqueServiceLogs [elments.service_code + "-" + elments.uid]["token"]= elments.token
-			uniqueServiceLogs [elments.service_code + "-" + elments.uid]["service_code"]= elments.service_code
-			uniqueServiceLogs [elments.service_code + "-" + elments.uid]["uid"]= elments.uid
-			uniqueServiceLogs [elments.service_code + "-" + elments.uid]["type"]= elments.type
-		}
-	})
-	let uniqueServiceLog = Object.values(uniqueServiceLogs)
+	for(const service_code of listServiceCodes) {
+		const listServiceLogs = await db.collection("service_logs").find({
+			service_code: service_code,
+			kind:1
+		}).toArray()
 
-	let mapServiceLog = {}
-	uniqueServiceLog.forEach( value => {
-		if( !mapServiceLog[ value.service_code + "-" + value.token ] ) {
-			mapServiceLog[ value.service_code + "-" + value.token ] = {}
-		 	mapServiceLog[ value.service_code + "-" + value.token ]['totalLog'] = 1		
-		 	mapServiceLog[ value.service_code + "-" + value.token ]['price'] = value.price
-		 	mapServiceLog[ value.service_code + "-" + value.token ]['data'] = []
-		 	mapServiceLog[ value.service_code + "-" + value.token ]['data'].push(value)
-		 	mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = 0
-		 	mapServiceLog[ value.service_code + "-" + value.token ]['token'] = value.token
-		 	mapServiceLog[ value.service_code + "-" + value.token ]['service_code'] = value.service_code
-		 	mapServiceLog[ value.service_code + "-" + value.token ]['type'] = value.type
-		} else {
-			mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']++
-		}
-		mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = mapServiceLog[ value.service_code + "-" + value.token ]['price'] * mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']
-	});
-	insertDailyStat( Object.values(mapServiceLog)).then(data => {  
-		console.log('updateTime: ' + new Date())
-	})
-}
+		//Xoá bỏ những bản ghi trùng nhau trong service log
+		let uniqueServiceLogs = {}
+		listServiceLogs.forEach(elments => {
+			if(!uniqueServiceLogs [elments.service_code + "-" + elments.uid]) {
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid] = {}
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["price"]= elments.price
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["token"]= elments.token
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["service_code"]= elments.service_code
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["uid"]= elments.uid
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["type"]= elments.type
+			}
+		})
+		let uniqueServiceLog = Object.values(uniqueServiceLogs)
 
-function insertDailyStat(listServiceCodeToken) {
-	 return new Promise((resolve, reject) => {
-       	let results = [];
-       	let completed = 0;
-       
-       	listServiceCodeToken.forEach((value, index) => {
-       		let paramUpdate = {
+		let mapServiceLog = {}
+		uniqueServiceLog.forEach( value => {
+			if( !mapServiceLog[ value.service_code + "-" + value.token ] ) {
+				mapServiceLog[ value.service_code + "-" + value.token ] = {}
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['totalLog'] = 1		
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['price'] = value.price
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['data'] = []
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['data'].push(value)
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = 0
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['token'] = value.token
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['service_code'] = value.service_code
+			 	mapServiceLog[ value.service_code + "-" + value.token ]['type'] = value.type
+			} else {
+				mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']++
+			}
+			mapServiceLog[ value.service_code + "-" + value.token ]['totalPrice'] = mapServiceLog[ value.service_code + "-" + value.token ]['price'] * mapServiceLog[ value.service_code + "-" + value.token ]['totalLog']
+		});
+
+		let listServiceLog = Object.values(mapServiceLog)
+
+		for(const value of listServiceLog) {
+			let paramUpdate = {
        			token: value.token,
 				type: value.type,
 				service_code:value.service_code,
        		}
 
        		let paramInsert = {
-       			finishTime: startDay - 691200000,
-				finishTimeISO:new Date(startDay - 691200000).toLocaleDateString(),
-				closedTime: startDay - 86400000,
-				closedTimeISO: new Date(startDay - 86400000).toLocaleDateString(),
+       			finishTime: startDay - 864000000,
+				finishTimeISO:new Date(startDay - 864000000).toLocaleDateString(),
+				closedTime: startDay - 259200000,
+				closedTimeISO: new Date(startDay - 259200000).toLocaleDateString(),
        			price: value.price,
        			status: "Closed",
 				total: value.totalLog,
 				amount: value.totalPrice,
 				updated_at:new Date().valueOf()
        		}
+       		await db.collection("daily_stat").findOneAndUpdate(paramUpdate, {$set: paramInsert},{ upsert: true})
+       		.then(result => {
+       			// console.log("insert success")
+       		}).catch((error) => {
+       			console.log('insert error' + error);
+       		})
 
-            Promise.resolve( db.collection("daily_stat").findOneAndUpdate(paramUpdate, {$set: paramInsert},{ upsert: true}) )
-            .then(result => {
-                results[index] = result;
-                completed += 1;
-                
-                if (completed == listServiceCodeToken.length) {
-                    resolve(results);
-                }
-            }).catch(err => reject(err));
-       });
-    });
+		}
+	}
+
+	console.log('endTime: ' + new Date());
+	console.log("------------------Kết thúc một chu kì------------------")
 }
+
+
+
