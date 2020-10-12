@@ -51,7 +51,7 @@ const pushDataService = async() => {
 			console.log("Data rong: " + token)
 		} else {
 			let amounts = 0
-			let amount = 0
+			let amount1 = 0
 			let warrantyCost = 0
 			for(const amount of dataDaily) {
 				if(!amount.warrantyCosts) {
@@ -60,26 +60,26 @@ const pushDataService = async() => {
 					amounts = parseInt(amounts) + (parseInt(amount.amount) - parseInt(amount.warrantyCosts))
 				}
 
-				amount = parseInt(amount)+ parseInt(amount.amount)
+				amount1 = parseInt(amount1)+ parseInt(amount.amount)
 				warrantyCost = parseInt(warrantyCost)+ parseInt(amount.warrantyCost)
 
 			}
 
-			await db.collection("financial").findOneAndUpdate({
-				token:token,
-				closedTime: startDay - 345600000,
-			}, {
-				$set: {
-					closedTimeISO:new Date(startDay - 345600000).toLocaleDateString(),
-					update_at:new Date().getTime(),
-					amount: amounts,
-					status:"Chưa thanh toán",
-					statusNumber:0
-				}},
-				{
-					upsert: true
-				}
-			)	
+			// await db.collection("financial").findOneAndUpdate({
+			// 	token:token,
+			// 	closedTime: startDay - 345600000,
+			// }, {
+			// 	$set: {
+			// 		closedTimeISO:new Date(startDay - 345600000).toLocaleDateString(),
+			// 		update_at:new Date().getTime(),
+			// 		amount: amounts,
+			// 		status:"Chưa thanh toán",
+			// 		statusNumber:0
+			// 	}},
+			// 	{
+			// 		upsert: true
+			// 	}
+			// )	
 			console.log(amounts)
 			console.log(amount)
 			console.log(warrantyCost)
