@@ -34,8 +34,8 @@ const dailyStat = async() => {
 	console.log('timeStart: ' + new Date());
 	const listServiceCodes = await db.collection("services").distinct("service_code",{
 		TimeSuccess: {
-	        $gte: startDay - 777600000,
-	        $lt: endDay - 777600000
+	        $gte: startDay - 691200000,
+	        $lt: endDay - 691200000
 	    },
         $or:[{
             status: "Success"
@@ -91,10 +91,10 @@ const dailyStat = async() => {
        		}
 
        		let paramInsert = {
-       			finishTime: startDay - 777600000,
-				finishTimeISO:new Date(startDay - 777600000).toLocaleDateString(),
-				closedTime: startDay - 172800000,
-				closedTimeISO: new Date(startDay - 172800000).toLocaleDateString(),
+       			finishTime: startDay - 691200000,
+				finishTimeISO:new Date(startDay - 691200000).toLocaleDateString(),
+				closedTime: startDay - 86400000,
+				closedTimeISO: new Date(startDay - 86400000).toLocaleDateString(),
        			price: value.price,
        			status: "Closed",
 				total: value.totalLog,
