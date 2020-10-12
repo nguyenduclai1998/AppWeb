@@ -34,7 +34,7 @@ const pushDataService = async() => {
 	const tokenDaily = await db.collection("daily_stat").distinct("token", {
 		closedTime:{
 			$gte:startDay - 345600000,
-			$lt: endDay - 345600000
+			$lte: endDay - 345600000
 		}
 	})
 	for(const token of tokenDaily) {
@@ -43,7 +43,7 @@ const pushDataService = async() => {
 			status: "Closed",
 			closedTime:{
 				$gte:startDay - 345600000,
-				$lt: endDay - 345600000
+				$lte: endDay - 345600000
 			}
 		}).toArray()
 		
