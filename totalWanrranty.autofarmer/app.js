@@ -31,8 +31,8 @@ var endDay = end.valueOf();
 const wanrranty = async() => {
 	const serviceSuccess = await db.collection("services").distinct("service_code",{
 		TimeSuccess: {
-	        $gte: startDay - 950400000,
-	        $lt: endDay - 950400000
+	        $gte: startDay - 864000000,
+	        $lt: endDay - 864000000
 	    },
 	    $or: [{
 	        status: "Success"
@@ -69,6 +69,8 @@ const wanrranty = async() => {
 		insertDailyStat( Object.values(mapServiceLog)).then(data => {  
 			console.log(serviceCode)
 		})
+
+		
 	}
 	console.log('insert xong tổng bảo hành')
 	console.log('UpdateTime:' + new Date())
