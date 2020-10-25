@@ -39,6 +39,7 @@ const copyData = async() => {
 	data.forEach(value => {
 		delete value._id
 	})
+	console.log(data)
 
 	await db.collection("daily_stat_test_3").insertMany(data)
 	console.log("done")
