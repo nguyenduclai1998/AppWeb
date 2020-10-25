@@ -10,7 +10,7 @@ const db = mongoose.connection
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async() => {
 		console.log("Connect success");
-		await wanrranty()
+		await copyData()
 	}) 
 	.catch((error) => {
 		console.log("connect error" + error)
@@ -27,6 +27,21 @@ end.setHours(23,59,59,999);
 
 var startDay = start.valueOf()
 var endDay = end.valueOf();
+
+const copyData = async() => {
+	const data = await db.collection("daily_stat").find({
+		closedTime: {
+			$gte: startDay - 1814400000,
+			$lt: endDay - 1296000000
+		}
+	}).toArray()
+
+	data.forEach(value => {
+		delete value._id
+	})
+
+	await db.collection("daily_stat_test_3").insertMany(data)
+} 
 
 const wanrranty = async() => {
 	const serviceSuccess = await db.collection("services").distinct("service_code",{
