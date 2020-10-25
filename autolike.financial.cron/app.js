@@ -31,14 +31,14 @@ var endDay = end.valueOf();
 const pushDataService = async() => {
 	console.log("------------------Bắt đầu một chu kì------------------")
 	console.log('timeStart: ' + new Date());
-	const tokenDaily = await db.collection("daily_stat").distinct("token", {
+	const tokenDaily = await db.collection("daily_stat_test_3").distinct("token", {
 		closedTime:{
 			$gte:1602262800000,
 			$lte: 1602349199999
 		}
 	})
 	for(const token of tokenDaily) {
-		const dataDaily = await db.collection("daily_stat").find({
+		const dataDaily = await db.collection("daily_stat_test_3").find({
 			token:token,
 			status: "Closed",
 			closedTime:{
@@ -61,7 +61,7 @@ const pushDataService = async() => {
 				}
 			}
 
-			await db.collection("financial").findOneAndUpdate({
+			await db.collection("financial_test_3").findOneAndUpdate({
 				token:token,
 				closedTime: 1602262800000,
 			}, {
