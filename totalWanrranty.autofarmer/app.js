@@ -40,6 +40,7 @@ const wanrranty = async() => {
 	        status: "pause"
 	    }],
 	})
+	console.log(serviceSuccess.length)
 	for(const serviceCode of serviceSuccess) {
 		const totalWanrranty = await db.collection("service_logs").find({
 		    $or: [{
@@ -47,11 +48,26 @@ const wanrranty = async() => {
 		    }, {
 		        hasavatar: false
 		    }],
-		    service_code:serviceCode
+		    service_code:serviceCode,
+		    kind: 1
 		}).toArray()
 
+		//Xoá bỏ những bản ghi trùng nhau trong service log
+		let uniqueServiceLogs = {}
+		totalWanrranty.forEach(elments => {
+			if(!uniqueServiceLogs [elments.service_code + "-" + elments.uid]) {
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid] = {}
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["price"]= elments.price
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["token"]= elments.token
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["service_code"]= elments.service_code
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["uid"]= elments.uid
+				uniqueServiceLogs [elments.service_code + "-" + elments.uid]["type"]= elments.type
+			}
+		})
+		let uniqueServiceLog = Object.values(uniqueServiceLogs)
+
 		let mapServiceLog = {}
-		totalWanrranty.forEach( value => {
+		uniqueServiceLog.forEach( value => {
 			if( !mapServiceLog[ value.service_code + "-" + value.token ] ) {
 				mapServiceLog[ value.service_code + "-" + value.token ] = {}
 			 	mapServiceLog[ value.service_code + "-" + value.token ]['totalLog'] = 1		
@@ -93,7 +109,7 @@ function insertDailyStat(listServiceCodeToken, startDay) {
 				updated_at:new Date().valueOf()
        		}
 
-            Promise.resolve( db.collection("daily_stat").findOneAndUpdate(paramUpdate, {$set: paramInsert},{ upsert: true}) )
+            Promise.resolve( db.collection("daily_stat_test_3").findOneAndUpdate(paramUpdate, {$set: paramInsert},{ upsert: true}) )
             .then(result => {
                 results[index] = result;
                 completed += 1;
