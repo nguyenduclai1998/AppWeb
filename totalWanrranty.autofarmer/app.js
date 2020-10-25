@@ -41,6 +41,7 @@ const copyData = async() => {
 	})
 
 	await db.collection("daily_stat_test_3").insertMany(data)
+	console.log("done")
 } 
 
 const wanrranty = async() => {
