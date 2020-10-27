@@ -10,6 +10,7 @@ const db = mongoose.connection
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async () => {
 		console.log("Connect success");
+		await pushDataService()
 		await data()
 	}) 
 	.catch((error) => {
