@@ -10,7 +10,6 @@ const db = mongoose.connection
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async() => {
 		console.log("Connect success");
-		await data()
 		await wanrranty()
 	}) 
 	.catch((error) => {
@@ -29,29 +28,11 @@ end.setHours(23,59,59,999);
 var startDay = start.valueOf()
 var endDay = end.valueOf();
 
-const data = async() => {
-	const data = await db.collection("daily_stat").find({
-		finishTime:{
-			$gte: 1601658000000,
-			$lt:1601744399999
-		}
-	}).toArray()
-	console.log(data.length)
-	data.forEach(value => {
-		delete value._id
-	})
-
-	console.log(data)
-	await db.collection("daily_stat_test_3").insertMany(data)
-	console.log("done")
-
-}
-
 const wanrranty = async() => {
 	const serviceSuccess = await db.collection("services").distinct("service_code",{
 		TimeSuccess: {
-	        $gte: 1601658000000,
-	        $lt: 1601744399999
+	        $gte: 1601830800000,
+	        $lt: 1601917199999
 	    },
 	    $or: [{
 	        status: "Success"
@@ -128,7 +109,7 @@ function insertDailyStat(listServiceCodeToken, startDay) {
 				updated_at:new Date().valueOf()
        		}
 
-            Promise.resolve( db.collection("daily_stat_test_3").findOneAndUpdate(paramUpdate, {$set: paramInsert},{ upsert: true}) )
+            Promise.resolve( db.collection("daily_stat").findOneAndUpdate(paramUpdate, {$set: paramInsert},{ upsert: true}) )
             .then(result => {
                 results[index] = result;
                 completed += 1;
