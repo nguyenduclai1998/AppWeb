@@ -10,7 +10,7 @@ const db = mongoose.connection
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async () => {
 		console.log("Connect success");
-		await pushDataService()
+		await data()
 	}) 
 	.catch((error) => {
 		console.log("connect error"+error)
@@ -28,6 +28,17 @@ end.setHours(23,59,59,999);
 var startDay = start.valueOf()
 var endDay = end.valueOf();
 
+const data = async() => {
+	const data = await db.collection("financial").find({
+		closedTime: 1602435600000,
+	}).toArray()
+	let tong = 0
+	for(const value of data) {
+		tong = tong + value.amount
+	}
+
+	console.log(tong)
+}
 const pushDataService = async() => {
 	console.log("------------------Bắt đầu một chu kì------------------")
 	console.log('timeStart: ' + new Date());
