@@ -31,8 +31,8 @@ var endDay = end.valueOf();
 const wanrranty = async() => {
 	const serviceSuccess = await db.collection("services").distinct("service_code",{
 		TimeSuccess: {
-	        $gte: 1602176400000,
-	        $lt: 1602262799999
+	        $gte: 1602262800000,
+	        $lt: 1602349199999
 	    },
 	    $or: [{
 	        status: "Success"
