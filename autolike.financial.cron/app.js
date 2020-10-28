@@ -32,6 +32,7 @@ var endDay = end.valueOf();
 const data = async() => {
 	const data = await db.collection("financial").find({
 		closedTime: 1603126800000,
+		status: "Closed",
 	}).toArray()
 	let tong = 0
 	for(const value of data) {
