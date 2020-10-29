@@ -98,54 +98,60 @@ const pushDataService = async() => {
 const test = async() => {
 	console.log("------------------Bắt đầu một chu kì------------------")
 	console.log('timeStart: ' + new Date());
-	const dataDaily = await db.collection("daily_stat").find({
-		status: "Closed",
-		closedTime:{
-			$gte:1603299600000,
-			$lte: 1603385999999
-		},
-		token:"RJI2G441ODEWOJFEPI8E4G"
-	}).toArray()
-	
-	if(dataDaily.length == 0) {
-		console.log("Data rong: " + token)
-	} else {
-		let amounts = 0
-		for(const amount of dataDaily) {
-			if(!amount.warrantyCosts) {
-				amounts = parseInt(amounts)+ parseInt(amount.amount)
+	let tokenDaily = ["RJI2G441ODEWOJFEPI8E4G", "6VY3SSF3QUU7LD68U4NLRK7VYNH9ZF2L", "BK8ZYZQ2M5LW6P2JY3GQTCHE96QRSJ7Y", "R895J4EHA4MQ0ZQMY94FOG"]
+	for(const token of tokenDaily) {
+		const dataDaily = await db.collection("daily_stat").find({
+			status: "Closed",
+			closedTime:{
+				$gte:1603299600000,
+				$lte: 1603385999999
+			},
+			token:token
+		}).toArray()
+		
+		if(dataDaily.length == 0) {
+			console.log("Data rong: " + token)
+		} else {
+			let amounts = 0
+			for(const amount of dataDaily) {
+				if(!amount.warrantyCosts) {
+					amounts = parseInt(amounts)+ parseInt(amount.amount)
 
-			} else {
-				amounts = parseInt(amounts) + (parseInt(amount.amount) - parseInt(amount.warrantyCosts))
+				} else {
+					amounts = parseInt(amounts) + (parseInt(amount.amount) - parseInt(amount.warrantyCosts))
 
+				}
 			}
 		}
+		console.log("LaiDailyToken: " + token + ":" + amounts)
 	}
 
-	const dataDailyHong = await db.collection("hongnn_daily_stat2").find({
-		status: "Closed",
-		closedTime:{
-			$gte:1603299600000,
-			$lte: 1603385999999
-		},
-		token:"RJI2G441ODEWOJFEPI8E4G"
-	}).toArray()
-	
-	if(dataDailyHong.length == 0) {
-		console.log("Data rong: " + token)
-	} else {
-		let amountsHong = 0
-		for(const amountHong of dataDailyHong) {
-			if(!amountHong.warrantyCosts) {
-				amountsHong = parseInt(amountsHong)+ parseInt(amountHong.amount)
+	for(const token of tokenDaily) {
+		const dataDailyHong = await db.collection("hongnn_daily_stat2").find({
+			status: "Closed",
+			closedTime:{
+				$gte:1603299600000,
+				$lte: 1603385999999
+			},
+			token:"RJI2G441ODEWOJFEPI8E4G"
+		}).toArray()
+		
+		if(dataDailyHong.length == 0) {
+			console.log("Data rong: " + token)
+		} else {
+			let amountsHong = 0
+			for(const amountHong of dataDailyHong) {
+				if(!amountHong.warrantyCosts) {
+					amountsHong = parseInt(amountsHong)+ parseInt(amountHong.amount)
 
-			} else {
-				amountsHong = parseInt(amountsHong) + (parseInt(amountHong.amount) - parseInt(amountHong.warrantyCosts))
+				} else {
+					amountsHong = parseInt(amountsHong) + (parseInt(amountHong.amount) - parseInt(amountHong.warrantyCosts))
 
+				}
 			}
 		}
+		console.log("HongDaily: " + token + ":"  + amountsHong)
 	}
-	console.log("LaiDaily: " + amounts)
-	console.log("HongDaily: " + amountsHong)
+	
 	console.log("------------------Kết thúc một chu kì------------------")
 }
