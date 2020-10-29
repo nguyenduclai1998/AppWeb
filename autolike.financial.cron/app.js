@@ -99,7 +99,6 @@ const test = async() => {
 	console.log("------------------Bắt đầu một chu kì------------------")
 	console.log('timeStart: ' + new Date());
 	const dataDaily = await db.collection("daily_stat").find({
-		token:token,
 		status: "Closed",
 		closedTime:{
 			$gte:1603299600000,
@@ -124,7 +123,6 @@ const test = async() => {
 	}
 
 	const dataDailyHong = await db.collection("hongnn_daily_stat2").find({
-		token:token,
 		status: "Closed",
 		closedTime:{
 			$gte:1603299600000,
