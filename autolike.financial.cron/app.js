@@ -98,19 +98,18 @@ const pushDataService = async() => {
 const test = async() => {
 	console.log("------------------Bắt đầu một chu kì------------------")
 	console.log('timeStart: ' + new Date());
-	let tokenDaily = ["RJI2G441ODEWOJFEPI8E4G", "6VY3SSF3QUU7LD68U4NLRK7VYNH9ZF2L", "BK8ZYZQ2M5LW6P2JY3GQTCHE96QRSJ7Y", "R895J4EHA4MQ0ZQMY94FOG"]
-	for(const token of tokenDaily) {
+	// let tokenDaily = ["RJI2G441ODEWOJFEPI8E4G", "6VY3SSF3QUU7LD68U4NLRK7VYNH9ZF2L", "BK8ZYZQ2M5LW6P2JY3GQTCHE96QRSJ7Y", "R895J4EHA4MQ0ZQMY94FOG"]
+	// for(const token of tokenDaily) {
 		const dataDaily = await db.collection("daily_stat").find({
 			status: "Closed",
 			closedTime:{
 				$gte:1603731600000,
 				$lte: 1603817999999
 			},
-			token:token
 		}).toArray()
 		
 		if(dataDaily.length == 0) {
-			console.log("Data rong: " + token)
+			console.log("Data rong: " )
 		} else {
 			let amounts = 0
 			for(const amount of dataDaily) {
@@ -122,22 +121,22 @@ const test = async() => {
 
 				}
 			}
-			console.log("LaiDailyToken: " + token + ":" + amounts)
+			console.log("LaiDailyToken: " +  amounts)
 		}
-	}
+	// }
 
-	for(const tokenH of tokenDaily) {
+	// for(const tokenH of tokenDaily) {
 		const dataDailyHong = await db.collection("hongnn_daily_stat2").find({
 			status: "Closed",
 			closedTime:{
 				$gte:1603731600000,
 				$lte: 1603817999999
 			},
-			token:tokenH
+
 		}).toArray()
 		
 		if(dataDailyHong.length == 0) {
-			console.log("Data rong: " + tokenH)
+			console.log("Data rong: ")
 		} else {
 			let amountsHong = 0
 			for(const amountHong of dataDailyHong) {
@@ -149,9 +148,9 @@ const test = async() => {
 
 				}
 			}
-			console.log("HongDaily: " + tokenH + ":"  + amountsHong)
+			console.log("HongDaily: "  + amountsHong)
 		}
-	}
+	// }
 	
 	console.log("------------------Kết thúc một chu kì------------------")
 }
