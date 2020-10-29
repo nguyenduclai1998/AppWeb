@@ -133,11 +133,11 @@ const test = async() => {
 				$gte:1603731600000,
 				$lte: 1603817999999
 			},
-			token:token
+			token:tokenH
 		}).toArray()
 		
 		if(dataDailyHong.length == 0) {
-			console.log("Data rong: " + token)
+			console.log("Data rong: " + tokenH)
 		} else {
 			let amountsHong = 0
 			for(const amountHong of dataDailyHong) {
@@ -149,7 +149,7 @@ const test = async() => {
 
 				}
 			}
-			console.log("HongDaily: " + token + ":"  + amountsHong)
+			console.log("HongDaily: " + tokenH + ":"  + amountsHong)
 		}
 	}
 	
