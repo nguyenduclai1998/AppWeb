@@ -122,8 +122,8 @@ const test = async() => {
 
 				}
 			}
+			console.log("LaiDailyToken: " + token + ":" + amounts)
 		}
-		console.log("LaiDailyToken: " + token + ":" + amounts)
 	}
 
 	for(const token of tokenDaily) {
@@ -149,8 +149,8 @@ const test = async() => {
 
 				}
 			}
+			console.log("HongDaily: " + token + ":"  + amountsHong)
 		}
-		console.log("HongDaily: " + token + ":"  + amountsHong)
 	}
 	
 	console.log("------------------Kết thúc một chu kì------------------")
