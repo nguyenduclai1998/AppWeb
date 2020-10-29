@@ -103,8 +103,8 @@ const test = async() => {
 		const dataDaily = await db.collection("daily_stat").find({
 			status: "Closed",
 			closedTime:{
-				$gte:1603299600000,
-				$lte: 1603385999999
+				$gte:1603731600000,
+				$lte: 1603817999999
 			},
 			token:token
 		}).toArray()
@@ -130,8 +130,8 @@ const test = async() => {
 		const dataDailyHong = await db.collection("hongnn_daily_stat2").find({
 			status: "Closed",
 			closedTime:{
-				$gte:1603299600000,
-				$lte: 1603385999999
+				$gte:1603731600000,
+				$lte: 1603817999999
 			},
 			token:"RJI2G441ODEWOJFEPI8E4G"
 		}).toArray()
