@@ -126,14 +126,14 @@ const test = async() => {
 		}
 	}
 
-	for(const token of tokenDaily) {
+	for(const tokenH of tokenDaily) {
 		const dataDailyHong = await db.collection("hongnn_daily_stat2").find({
 			status: "Closed",
 			closedTime:{
 				$gte:1603731600000,
 				$lte: 1603817999999
 			},
-			token:"RJI2G441ODEWOJFEPI8E4G"
+			token:token
 		}).toArray()
 		
 		if(dataDailyHong.length == 0) {
