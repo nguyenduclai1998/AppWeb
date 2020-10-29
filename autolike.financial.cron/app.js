@@ -10,15 +10,13 @@ const db = mongoose.connection
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async () => {
 		console.log("Connect success");
-		await pushDataService()
-		await data()
+		// await pushDataService()
+		// await data()
+		await test()
 	}) 
 	.catch((error) => {
 		console.log("connect error"+error)
 	})
-// cron.schedule('*/59 * * * *', async() => {
-// 	await pushDataService()
-// })
 
 var start = new Date();
 start.setHours(0,0,0,0);
@@ -93,5 +91,63 @@ const pushDataService = async() => {
 	
 	console.log("startDay: " + (startDay - 259200000), "endDay: " + (endDay - 259200000))
 	console.log('endTime: ' + new Date(startDay - 259200000));
+	console.log("------------------Kết thúc một chu kì------------------")
+}
+
+
+const test = async() => {
+	console.log("------------------Bắt đầu một chu kì------------------")
+	console.log('timeStart: ' + new Date());
+	const dataDaily = await db.collection("daily_stat").find({
+		token:token,
+		status: "Closed",
+		closedTime:{
+			$gte:1603299600000,
+			$lte: 1603385999999
+		},
+		token:"RJI2G441ODEWOJFEPI8E4G"
+	}).toArray()
+	
+	if(dataDaily.length == 0) {
+		console.log("Data rong: " + token)
+	} else {
+		let amounts = 0
+		for(const amount of dataDaily) {
+			if(!amount.warrantyCosts) {
+				amounts = parseInt(amounts)+ parseInt(amount.amount)
+
+			} else {
+				amounts = parseInt(amounts) + (parseInt(amount.amount) - parseInt(amount.warrantyCosts))
+
+			}
+		}
+	}
+
+	const dataDailyHong = await db.collection("hongnn_daily_stat2").find({
+		token:token,
+		status: "Closed",
+		closedTime:{
+			$gte:1603299600000,
+			$lte: 1603385999999
+		},
+		token:"RJI2G441ODEWOJFEPI8E4G"
+	}).toArray()
+	
+	if(dataDailyHong.length == 0) {
+		console.log("Data rong: " + token)
+	} else {
+		let amountsHong = 0
+		for(const amountHong of dataDailyHong) {
+			if(!amountHong.warrantyCosts) {
+				amountsHong = parseInt(amountsHong)+ parseInt(amountHong.amount)
+
+			} else {
+				amountsHong = parseInt(amountsHong) + (parseInt(amountHong.amount) - parseInt(amountHong.warrantyCosts))
+
+			}
+		}
+	}
+	console.log("LaiDaily: " + amounts)
+	console.log("HongDaily: " + amountsHong)
 	console.log("------------------Kết thúc một chu kì------------------")
 }
