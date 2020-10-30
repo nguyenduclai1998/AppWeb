@@ -150,7 +150,7 @@ const test = async() => {
 
 				}
 			}
-			console.log("HongDaily: " + token + ":"  + amountsHong)
+			console.log("HongDaily: " + tokenH + ":"  + amountsHong)
 		}
 	}
 	
