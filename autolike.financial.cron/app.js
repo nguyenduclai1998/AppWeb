@@ -10,9 +10,9 @@ const db = mongoose.connection
 mongoose.connect('mongodb://134.122.71.253:27017/autolike', { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(async () => {
 		console.log("Connect success");
-		// await pushDataService()
-		// await data()
-		await test()
+		await pushDataService()
+		await data()
+		// await test()
 	}) 
 	.catch((error) => {
 		console.log("connect error"+error)
@@ -36,7 +36,15 @@ const data = async() => {
 		tong = tong + value.amount
 	}
 
-	console.log(tong)
+	const dataH = await db.collection("hongnn_financial").find({
+		closedTime: 1603299600000,
+	}).toArray()
+	let tongH = 0
+	for(const element of data) {
+		tongH = tongH + element.amount
+	}
+
+	console.log(tongH)
 }
 const pushDataService = async() => {
 	console.log("------------------Bắt đầu một chu kì------------------")
@@ -52,9 +60,9 @@ const pushDataService = async() => {
 			token:token,
 			status: "Closed",
 			closedTime:{
-				$gte:1603299600000,
-				$lte: 1603385999999
-			}
+				$gte:1603818000000,
+				$lte: 1603904399999
+			},
 		}).toArray()
 		
 		if(dataDaily.length == 0) {
@@ -73,10 +81,10 @@ const pushDataService = async() => {
 
 			await db.collection("financial").findOneAndUpdate({
 				token:token,
-				closedTime: 1603299600000,
+				closedTime: 1603818000000,
 			}, {
 				$set: {
-					closedTimeISO:new Date(1603299600000).toLocaleDateString(),
+					closedTimeISO:new Date(1603818000000).toLocaleDateString(),
 					update_at:new Date().getTime(),
 					amount: amounts,
 					status:"Chưa thanh toán",
