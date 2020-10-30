@@ -29,7 +29,7 @@ var endDay = end.valueOf();
 
 const data = async() => {
 	const data = await db.collection("financial").find({
-		closedTime: 1603731600000,
+		closedTime: 1603818000000,
 		statusNumber:0
 	}).toArray()
 	let tong = 0
@@ -38,7 +38,7 @@ const data = async() => {
 	}
 	console.log(tong)
 	const dataH = await db.collection("hongnn_financial").find({
-		closedTime: 1603731600000,
+		closedTime: 1603818000000,
 		statusNumber:0
 	}).toArray()
 	let tongH = 0
@@ -53,8 +53,8 @@ const pushDataService = async() => {
 	console.log('timeStart: ' + new Date());
 	const tokenDaily = await db.collection("daily_stat").distinct("token", {
 		closedTime:{
-			$gte:1603731600000,
-			$lte: 1603817999999
+			$gte:1603818000000,
+			$lte: 1603904399999
 		}
 	})
 	for(const token of tokenDaily) {
@@ -62,8 +62,8 @@ const pushDataService = async() => {
 			token:token,
 			status: "Closed",
 			closedTime:{
-				$gte:1603731600000,
-				$lte: 1603817999999
+				$gte:1603818000000,
+				$lte: 1603904399999
 			},
 		}).toArray()
 		
@@ -83,10 +83,10 @@ const pushDataService = async() => {
 
 			await db.collection("financial").findOneAndUpdate({
 				token:token,
-				closedTime: 1603731600000,
+				closedTime: 1603818000000,
 			}, {
 				$set: {
-					closedTimeISO:new Date(1603731600000).toLocaleDateString(),
+					closedTimeISO:new Date(1603818000000).toLocaleDateString(),
 					update_at:new Date().getTime(),
 					amount: amounts,
 					status:"Chưa thanh toán",
