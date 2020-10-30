@@ -106,6 +106,7 @@ const test = async() => {
 				$gte:1603818000000,
 				$lte: 1603904399999
 			},
+			token:token
 		}).toArray()
 		
 		if(dataDaily.length == 0) {
@@ -121,7 +122,7 @@ const test = async() => {
 
 				}
 			}
-			console.log("LaiDailyToken: " +  amounts)
+			console.log("LaiDailyToken: " + token + ":" +  amounts)
 		}
 	}
 
@@ -132,6 +133,7 @@ const test = async() => {
 				$gte:1603818000000,
 				$lte: 1603904399999
 			},
+			token:tokenH
 
 		}).toArray()
 		
@@ -148,7 +150,7 @@ const test = async() => {
 
 				}
 			}
-			console.log("HongDaily: "  + amountsHong)
+			console.log("HongDaily: " + token + ":"  + amountsHong)
 		}
 	}
 	
